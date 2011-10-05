@@ -1,6 +1,9 @@
 
-
 EasyAGAL
+
+I am in the process of moving over to GitHub.
+EasyAGAL is currently available from Google Code at:
+http://code.google.com/p/easy-agal/
 
 
 CHANGE LOG --------------
