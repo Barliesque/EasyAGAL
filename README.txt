@@ -1,27 +1,23 @@
 
 EasyAGAL
 
-I am in the process of moving over to GitHub.
-EasyAGAL is currently available from Google Code at:
-http://code.google.com/p/easy-agal/
-
 
 CHANGE LOG --------------
 
-Revision: 34 - 4.Oct.2011 (Google Code)
+Revision: 34 - 4.Oct.2011
 - Replaced Blend.softLight() with a formula that is a perfect match with Photoshop and is *far* more efficient
 - setFragmentOpcode() and setVertexOpcode() now allow appending.  Instruction counting still not added.
 - Retested all blend modes.  Minor updates to avoid possible "two constant parameters" error.
 - Removed unsupported facility to select components of a SAMPLER register
 
-Revision: 33 - 4.Oct.2011 (Google Code)
+Revision: 33 - 4.Oct.2011
 - Fixed bugs in Blend.softLight() and Blend.hardLight() macros
 
-Revision: 32 - 3.Oct.2011 (Google Code)
+Revision: 32 - 3.Oct.2011
 - Updated AGALMiniAssembler.as to current version!!!
 - Removed verboseDebug as it is no longer an option in AGALMiniAssembler
 
-Revision: 31 - 2.Oct.2011 (Google Code)
+Revision: 31 - 2.Oct.2011
 - added CONST_byIndex
 - opcode and instruction count are available now before calling upload()
 - shader upload errors now trigger a dump of the shader code with line numbers
