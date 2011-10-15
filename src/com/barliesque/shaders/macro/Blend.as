@@ -457,5 +457,71 @@ package com.barliesque.shaders.macro {
 		
 		//---------------------------------------
 		
+		/**
+		 * Lighter Color - Selects the color with the brightest luminance.
+		 * [ 16 Instructions ]
+		 * @param	dest				Register to store resulting RGB color.
+		 * @param	rgbBlendColor		The RGB color of the pixel on top.
+		 * @param	rgbBaseColor		The RGB color of the pixel underneath.
+		 */
+		static public function lighterColor(dest:IRegister, baseColor:IRegister, blendColor:IRegister, temp:IRegister, temp2:IRegister):void {
+			var blendLum:IComponent = temp.x;
+			var baseLum:IComponent = temp.y;
+			var minRGB:IComponent = temp.z;
+			var maxRGB:IComponent = temp.w;
+			
+			// Actually, the following results in (luminance * 2)
+			// ...which is just fine for the purpose of selecting a color.
+			min(minRGB, blendColor.r, blendColor.g);
+			min(minRGB, minRGB, blendColor.b);
+			max(maxRGB, blendColor.r, blendColor.g);
+			max(maxRGB, maxRGB, blendColor.b);
+			add(blendLum, minRGB, maxRGB);
+			
+			min(minRGB, baseColor.r, baseColor.g);
+			min(minRGB, minRGB, baseColor.b);
+			max(maxRGB, baseColor.r, baseColor.g);
+			max(maxRGB, maxRGB, baseColor.b);
+			add(baseLum, minRGB, maxRGB);
+			
+			Utils.setByComparison(dest, blendLum, Utils.GREATER_THAN, baseLum, blendColor, baseColor, temp2);
+			move(dest.a, baseColor.a);
+		}
+		
+		
+		/**
+		 * Darker Color - Selects the color with the darkest luminance.
+		 * This macro temporarily calculates only the luminances of the specified colors to make the selection.
+		 * [ 16 Instructions ]
+		 * @param	dest				Register to store resulting RGB color.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	baseColor			The RGB color of the pixel underneath.
+		 */
+		static public function darkerColor(dest:IRegister, baseColor:IRegister, blendColor:IRegister, temp:IRegister, temp2:IRegister):void {
+			var blendLum:IComponent = temp.x;
+			var baseLum:IComponent = temp.y;
+			var minRGB:IComponent = temp.z;
+			var maxRGB:IComponent = temp.w;
+			
+			// Actually, the following results in (luminance * 2)
+			// ...which is just fine for the purpose of selecting a color.
+			min(minRGB, blendColor.r, blendColor.g);
+			min(minRGB, minRGB, blendColor.b);
+			max(maxRGB, blendColor.r, blendColor.g);
+			max(maxRGB, maxRGB, blendColor.b);
+			add(blendLum, minRGB, maxRGB);
+			
+			min(minRGB, baseColor.r, baseColor.g);
+			min(minRGB, minRGB, baseColor.b);
+			max(maxRGB, baseColor.r, baseColor.g);
+			max(maxRGB, maxRGB, baseColor.b);
+			add(baseLum, minRGB, maxRGB);
+			
+			Utils.setByComparison(dest, blendLum, Utils.LESS_THAN, baseLum, blendColor, baseColor, temp2);
+			move(dest.a, baseColor.a);
+		}
+		
+		//---------------------------------------
+		
 	}
 }
