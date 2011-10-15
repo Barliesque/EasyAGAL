@@ -8,6 +8,7 @@ package com.barliesque.agal {
 	internal class Component implements IComponent {
 		
 		private var _register:String;
+		private var _type:String;
 		
 		public function Component(register:Register, prop:String) {
 			_register = register.reg + "." + ComponentSelection.xyzwOnly(prop);
@@ -15,8 +16,14 @@ package com.barliesque.agal {
 			if (!valid(prop)) throw new Error("c15 Illegal component selection: " + _register);  // This is possible:  CONST[0]._("q")
 		}
 		
+		/// @private
 		internal function get reg():String { 
 			return _register;
+		}
+		
+		/// @private
+		internal function get type():String { 
+			return _type;
 		}
 		
 		static public function valid(prop:String):Boolean {

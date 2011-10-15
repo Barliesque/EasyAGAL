@@ -26,6 +26,7 @@ package com.barliesque.agal {
 				return code;
 			}
 			
+			internal function get type():String { return _name; }
 			internal function get name():String { return _name; }
 			internal function get vertexReg():String { return _vertexReg; }
 			internal function get fragmentReg():String { return _fragmentReg; }
