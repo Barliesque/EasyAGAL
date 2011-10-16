@@ -19,13 +19,13 @@ package com.barliesque.agal {
 		private var _context:Context3D;
 		
 		// Register definitions
-		internal var _ATTRIBUTE:Vector.<IRegister>;
-		internal var _CONST:Vector.<IRegister>;
-		internal var _TEMP:Vector.<IRegister>;
-		internal var _OUTPUT:Register;
-		internal var _VARYING:Vector.<IRegister>;
-		internal var _SAMPLER:Vector.<ISampler>;
-		internal var initialized:Boolean = false;
+		static private var _ATTRIBUTE:Vector.<IRegister>;
+		static private var _CONST:Vector.<IRegister>;
+		static private var _TEMP:Vector.<IRegister>;
+		static private var _OUTPUT:Register;
+		static private var _VARYING:Vector.<IRegister>;
+		static private var _SAMPLER:Vector.<ISampler>;
+		static private var initialized:Boolean = false;
 		
 		private var debug:Boolean;
 		private var assemblyDebug:Boolean;
