@@ -24,11 +24,13 @@ as you type, including the original AGAL opcodes.
 CHANGE LOG __________________________________________________________________________________________________________
 
 
-15.Oct.2011
+16.Oct.2011
 - Changed register variables to static, so that only one set is needed for the entire project
 - EasyBase.init() now does not get called if it's not needed.  If all shaders in a project use 
 	setVertexOpcode() and setFragmentOpcode() in the constructor, none of EasyAGAL's
 	registers need to be used, conserving memory.
+	
+15.Oct.2011
 - Added RegisterType and support for obtaining types of registers from macros.
 - Added two more blend modes to macro library Blend.as: lighterColor & darkerColor
 - Replaced nextRegister.as which mysteriously disappeared!
