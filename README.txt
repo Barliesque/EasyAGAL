@@ -23,6 +23,9 @@ as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
+23.OCT.2011
+- Modified AGALMiniAssembler.as to fix mishandling of RGBA component accessors
+- Removed workaround from EasyBase.as
 
 16.Oct.2011
 - Changed register variables to static, so that only one set is needed for the entire project
