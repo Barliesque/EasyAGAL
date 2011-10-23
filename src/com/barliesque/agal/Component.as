@@ -1,7 +1,7 @@
 package com.barliesque.agal {
 	
 	/**
-	 * A class allowing single register component to be passed as parameters
+	 * A class allowing a single register component to be passed as a parameter
 	 * 
 	 * @author David Barlia
 	 */
@@ -11,9 +11,9 @@ package com.barliesque.agal {
 		private var _type:String;
 		
 		public function Component(register:Register, prop:String) {
-			_register = register.reg + "." + ComponentSelection.xyzwOnly(prop);
+			_register = register.reg + "." + prop;  // ComponentSelection.xyzwOnly(prop)
 			
-			if (!valid(prop)) throw new Error("c15 Illegal component selection: " + _register);  // This is possible:  CONST[0]._("q")
+			if (!valid(prop)) throw new Error("Illegal component selection: " + _register);  // Catches something like this:  CONST[0]._("q")
 		}
 		
 		/// @private
@@ -26,6 +26,7 @@ package com.barliesque.agal {
 			return _type;
 		}
 		
+		/// @private
 		static public function valid(prop:String):Boolean {
 			switch(prop) {
 				case "x":	case "y":	case "z":	case "w":	

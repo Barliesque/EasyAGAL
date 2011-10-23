@@ -76,15 +76,16 @@ package com.barliesque.agal {
 		 * Returns vertex shader code to be passed to AGALMiniAssembler
 		 * If _vertexShader() has not already been called, it will be called now.
 		 * It is safe to call this function from within _vertexShader() without causing an infinte loop.
-		 * @param	lineNumbering	If true, line numbers are added to the left side to assist in locating tokens referred to by an AGAL error message
+		 * @param	lineNumbering	If true, line numbers are added to assist in locating tokens referred to by an AGAL error message
+		 * @param	formatAS3		If true, the result will be formatted as AS3 code that can be used in place of EasyAGAL instructions for faster processing. (NOT IMPLEMENTED YET)
 		 * @return	Returns vertex shader code to be passed to AGALMiniAssembler
 		 */
-		public function getVertexOpcode(lineNumbering:Boolean = false):String { 
+		public function getVertexOpcode(lineNumbering:Boolean = false, formatAS3:Boolean = false):String { 
 			prepVertexShader();
 			if (Assembler.isPreparing && Assembler.assemblingVertex) {
-				return (lineNumbering ? addLineNumbers(Assembler.code) : Assembler.code);
+				return ((lineNumbering || formatAS3) ? formatOpcode(Assembler.code, lineNumbering, formatAS3) : Assembler.code);
 			}
-			return (lineNumbering ? addLineNumbers(_vertexOpcode) : _vertexOpcode);
+			return ((lineNumbering || formatAS3) ? formatOpcode(_vertexOpcode, lineNumbering, formatAS3) : _vertexOpcode);
 		}
 		
 		/**
@@ -92,14 +93,15 @@ package com.barliesque.agal {
 		 * If _fragmentShader() has not already been called, it will be called now.
 		 * It is safe to call this function from within _fragmentShader() without causing an infinte loop.
 		 * @param	lineNumbering	If true, line numbers are added to the left side to assist in locating tokens referred to by an AGAL error message
+		 * @param	formatAS3		If true, the result will be formatted as AS3 code that can be used in place of EasyAGAL instructions for faster processing. (NOT IMPLEMENTED YET)
 		 * @return	Returns fragment shader code to be passed to AGALMiniAssembler
 		 */
-		public function getFragmentOpcode(lineNumbering:Boolean = false):String {
+		public function getFragmentOpcode(lineNumbering:Boolean = false, formatAS3:Boolean = false):String {
 			prepFragmentShader();
 			if (Assembler.isPreparing && !Assembler.assemblingVertex) {
-				return (lineNumbering ? addLineNumbers(Assembler.code) : Assembler.code);
+				return ((lineNumbering || formatAS3) ? formatOpcode(Assembler.code, lineNumbering, formatAS3) : Assembler.code);
 			}
-			return (lineNumbering ? addLineNumbers(_fragmentOpcode) : _fragmentOpcode);
+			return ((lineNumbering || formatAS3) ? formatOpcode(_fragmentOpcode, lineNumbering, formatAS3) : _fragmentOpcode);
 		}
 		
 		/// The Program3D instance created by calling upload()
@@ -110,8 +112,8 @@ package com.barliesque.agal {
 		
 		//---------------------------------------------------------
 		
-		/// @private
-		private function addLineNumbers(code:String):String {
+		/// @private    (formatAS3 option not implemented yet)
+		private function formatOpcode(code:String, lineNumbering:Boolean, formatAS3:Boolean):String {
 			if (code == null) return "";
 			var lines:Array = code.split("\n");
 			var count:int = 0;
