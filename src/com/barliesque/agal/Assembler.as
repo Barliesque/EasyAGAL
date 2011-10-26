@@ -37,7 +37,7 @@ package com.barliesque.agal {
 		
 		/// Append a line of opcode to the shader currently being prepared, and count lines
 		static internal function append(code:String, count:Boolean = true):void {
-			Assembler.code += code + "\n";
+			Assembler.code += code + ((code.substr(-1) == "\n") ? "" : "\n");
 			if (count) instructionCount++;
 		}
 		

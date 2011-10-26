@@ -112,29 +112,55 @@ package com.barliesque.agal {
 		
 		//---------------------------------------------------------
 		
-		/// @private    (formatAS3 option not implemented yet)
+		/// @private
 		private function formatOpcode(code:String, lineNumbering:Boolean, formatAS3:Boolean):String {
-			if (code == null) return "";
+			if (code == null || code == "") return "";
+			if (!lineNumbering && !formatAS3) return code;
+			
 			var lines:Array = code.split("\n");
 			var count:int = 0;
-			for (var i:int = 0; i < lines.length; i++) {
-				code = lines[i];
-				if (code.substr(0, 1) != "/" && code.length > 0) {
-					// Insert line number
-					code = lines[i];
-					lines[i] = (++count) + ". \t " + code;
-				} else {
-					if (code != "") lines[i] = "    \t " + code;
+			
+			var i:int;
+			
+			if (formatAS3) {
+				for (i = 0; i < lines.length; i++) {
+					if (lines[i].substr(0, 1) == "/") {
+						// Remark line - indent, but don't add to code string
+						lines[i] = "\t" + lines[i];
+					} else if (lines[i].length == 0) {
+						// Blank line - leave as is
+					} else {
+						// Code line - indent and wrap with quotes
+						lines[i] = "\t\"" + lines[i] + ((i < lines.length - 2) ? "\\n\" +" : "\"");
+						if (lineNumbering) {
+							// Add line number as a comment
+							for (var s:int = 48 - lines[i].length; s > 0; s--) lines[i] = lines[i] + " ";
+							lines[i] = lines[i] + "    // " + (++count) + ".";
+						}
+					}
+				}
+			} else {
+				for (i = 0; i < lines.length; i++) {
+					// If we're not formatting as AS3, then we must at least be adding line numbers
+					if (lines[i].substr(0, 1) != "/" && lines[i].length > 0) {
+						// Code line - Insert line number
+						lines[i] = (++count) + ". \t " + lines[i];
+					} else {
+						// Remark or Blank - Just indent
+						if (lines[i] != "") lines[i] = "    \t " + lines[i];
+					}
 				}
 			}
-			// Remove doubled blank lines
-			for (i = lines.length - 2; i >= 0; i--) {
-				if (lines[i] == lines[i + 1] && lines[i] == "") {
-					lines.splice(i + 1, 1);
-				}
+			
+			// Wrap string code into a statement
+			if (formatAS3) {
+				lines.unshift(Assembler.assemblingVertex ? "setVertexOpcode(" : "setFragmentOpcode(");
+				lines.push(");");
 			}
+			
 			return lines.join("\n");
 		}
+		
 		
 		/// @private
 		private function countTokenLines(code:String):int {
@@ -298,7 +324,7 @@ package com.barliesque.agal {
 		/// Add a comment to the opcode.  Helpful if you want to examine the opcode constructed by EasyAGAL.
 		/// Commenting is disabled when EasyBase::debug is set to false.
 		static protected function comment(...remarks):void {
-			// if (Assembler.assemblingDebug) {
+			// if (EasyBase.debugging) {
 				Assembler.append("\n", false);
 				for (var i:int = 0; i < remarks.length; i++) {
 					Assembler.append("// " + remarks[i], false);
