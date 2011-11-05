@@ -1,7 +1,8 @@
 EasyAGAL
 by David Barlia,  david@barliesque.com
 ---------------------------------
-https://github.com/Barliesque/EasyAGAL
+Download:	https://github.com/Barliesque/EasyAGAL
+Online Docs:	http://barliesque.com/easy_agal/docs/
 
 EasyAGAL is an open source ActionScript library that assists developers in writing AGAL 
 ("Adobe Graphics Assembly Language") by providing an AS3-based pseudo-AGAL command 
