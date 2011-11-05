@@ -4,10 +4,10 @@ package com.barliesque.agal {
 	import flash.utils.ByteArray;
 	
 	/**
-	 * ...
+	 * An internal class that maintains instances of AGAMiniAssembler, and data relating to EasyAGAL's preparation of shader opcode.
 	 * @author David Barlia
 	 */
-	public class Assembler {
+	internal class Assembler {
 		
 		static private var _debug:AGALMiniAssembler;
 		static private var _release:AGALMiniAssembler;

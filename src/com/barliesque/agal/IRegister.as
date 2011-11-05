@@ -2,6 +2,7 @@ package com.barliesque.agal {
 	
 	/**
 	 * A Register with component values
+	 * @usage  Use this interface when assigning variables as "aliases" to registers, or when defining parameters for a macro function.
 	 * @author David Barlia
 	 */
 	public interface IRegister extends IField {

@@ -202,18 +202,17 @@ package com.barliesque.shaders.macro {
 		
 		
 		/**
-		 * Vivid Light:  A combination of color burn and color dodge.
-		 * Non-commutative.  [14 instructions]
-		 *     burn = burn = (baseColor - 1.0 + blendColor×2) / blendColor×2
-		 *     dodge = dodge = baseColor / (1 - (blendColor×2 - 1))
-		 *     (Blend < ½) ? burn : dodge
-		 * 
+		 * Vivid Light:  A combination of color burn and color dodge.	</br>
+		 * Non-commutative - Layer order matters.						</br>
+		 * This macro contains 14 instructions.							</br>
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 * @param	half				A component containing the value:  0.5
 		 * @param	temp				A register temporarily utilized for this calculation
+		 * @param	temp2				A register temporarily utilized for this calculation
+		 * @param	temp3				A register temporarily utilized for this calculation
 		 */
 		static public function vividLight(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent, half:IComponent, temp:IRegister, temp2:IRegister, temp3:IRegister):void {
 			var burn:IField = temp.rgb;
