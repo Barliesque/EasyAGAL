@@ -1,4 +1,3 @@
-
 EasyAGAL
 by David Barlia,  david@barliesque.com
 ---------------------------------
@@ -23,7 +22,7 @@ as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
-11.Nov.2011
+5.Nov.2011
 - Compiled ASDocs now included
 - Updates to all ASDoc tags.  Lots of additions, some minor corrections.
 
