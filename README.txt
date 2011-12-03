@@ -1,12 +1,12 @@
+
 EasyAGAL
 by David Barlia,  david@barliesque.com
 ---------------------------------
-Download:	https://github.com/Barliesque/EasyAGAL
-Online Docs:	http://barliesque.com/easy_agal/docs/
+https://github.com/Barliesque/EasyAGAL
 
 EasyAGAL is an open source ActionScript library that assists developers in writing AGAL 
-("Adobe Graphics Assembly Language") by providing an AS3-based pseudo-AGAL command 
-set.  The resulting advantages include: 
+("Adobe Graphics Assembly Language") by providing an AS3-based pseudo-AGAL command set.
+The resulting advantages include: 
 	
 	* Code completion and hinting
 	* More easy-to-read code
@@ -23,7 +23,11 @@ as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
-5.Nov.2011
+3.Dec.2011
+- Updated AGALMiniAssembler.as to official branch with support for rgba accessors
+- Minor corrections in docs
+
+11.Nov.2011
 - Compiled ASDocs now included
 - Updates to all ASDoc tags.  Lots of additions, some minor corrections.
 
