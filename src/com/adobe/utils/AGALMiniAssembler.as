@@ -1,10 +1,3 @@
-/**
- * 
- *  This version of AGALMiniAssembler was modified on 10.23.11 by David Barlia
- *  to fix an issue where RGBA component accessors were mishandled.
- * 
- */
-
 /*
 Copyright (c) 2011, Adobe Systems Incorporated
 All rights reserved.
@@ -56,6 +49,18 @@ package com.adobe.utils
 		protected static const USE_NEW_SYNTAX:Boolean			= false;
 		
 		protected static const REGEXP_OUTER_SPACES:RegExp		= /^\s+|\s+$/g;
+		
+		protected static const COMPONENTS:Object				= {
+			120:0,	// x
+			121:1,	// y
+			122:2,	// z
+			119:3,	// w
+			
+			114:0,	// r
+			103:1,	// g
+			98:2,	// b
+			97:3	// a
+		};
 		
 		// ======================================================================
 		//	Properties
@@ -288,10 +293,11 @@ package com.adobe.utils
 					{
 						regmask = 0;
 						var cv:uint; 
-						var maskLength:uint = maskmatch[0].length;
+						var maskLength:uint = maskmatch[ 0 ].length;
+						var mask:String = maskmatch[ 0 ];
 						for ( var k:int = 1; k < maskLength; k++ )
 						{
-							cv = regIndex(maskmatch[0].charCodeAt(k));
+							cv = COMPONENTS[ mask.charCodeAt( k ) ];
 							if ( cv > 2 )
 								cv = 3;
 							if ( isDest )
@@ -326,7 +332,8 @@ package com.adobe.utils
 							badreg = true; 
 							break;						
 						}
-						relsel = regIndex(selmatch[0].charCodeAt(1));
+						
+						relsel = COMPONENTS[ selmatch[ 0 ].charCodeAt( 1 ) ];
 						if ( relsel > 2 )
 							relsel = 3; 
 						var relofs:Array = relreg[0].match( /\+\d{1,3}/ig );
@@ -448,21 +455,6 @@ package com.adobe.utils
 			
 			return agalcode;
 		}
-		
-		
-		private function regIndex(accessor:uint):uint {
-			var index:int = accessor - "x".charCodeAt(0);
-			if (index < 0) {
-				switch (accessor) {
-					case "r".charCodeAt(0):	index = 0;	break;
-					case "g".charCodeAt(0):	index = 1;	break;
-					case "b".charCodeAt(0):	index = 2;	break;
-					case "a".charCodeAt(0):	index = 3;	break;
-				}
-			}
-			return index;
-		}
-		
 		
 		static private function init():void
 		{
