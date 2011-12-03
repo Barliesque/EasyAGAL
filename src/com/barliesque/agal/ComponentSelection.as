@@ -10,7 +10,7 @@ package com.barliesque.agal {
 		private var _type:String;
 		
 		public function ComponentSelection(register:Register, prop:String) {
-			_register = register.reg + ((prop.length > 0) ? ("." + prop) : "");  // xyzwOnly(prop)
+			_register = register.reg + ((prop.length > 0) ? ("." + prop) : "");
 			_type = register.type;
 			
 			// Validate components
@@ -29,30 +29,6 @@ package com.barliesque.agal {
 		internal function get type():String { 
 			return _type;
 		}
-		
-		
-		/**
-		 * This is a workaround for a bug in AGALMiniAssembler that mishandles rgba component accessors.
-		 * NOTE:  This workaround is not necessary if you are using the modified version of AGALMiniAssembler included with EasyAGAL.
-		 * @param	components		Component accessors, guaranteed lowercase in Register.as
-		 * @return	
-		 *
-		static internal function xyzwOnly(components:String):String {
-			
-			var output:String = "";
-			for (var i:int = 0; i < components.length; i++) {
-				var input:String = components.substr(i, 1);
-				switch (input) {
-					case "r":	output += "x";  	break;
-					case "g":	output += "y";  	break;
-					case "b":	output += "z";  	break;
-					case "a":	output += "w";  	break;
-					default:	output += input;	break;
-				}
-			}
-			return output;
-		}
-		*/
 		
 	}
 }

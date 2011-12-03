@@ -42,7 +42,7 @@ package com.barliesque.agal {
 		
 		/**
 		 * <p>To be overridden.  Write your vertex shader here.</p>
-		 * <p>This function is called internally when the shader program needs to prepared and assembled.
+		 * <p>This function is called internally when the shader program needs to be prepared and assembled.
 		 * By extending and using the functions found in either EasyAGAL or EasierAGAL, both of which extend this class, 
 		 * write your Vertex Shader program within this function.</p>
 		 * <p>Note: If opcode has already been assigned to 'vertexOpcode' then that code will be used, and this function will not be called.</p>
@@ -52,7 +52,7 @@ package com.barliesque.agal {
 		
 		/**
 		 * <p>To be overridden.  Write your fragment shader here.</p>
-		 * <p>This function is called internally when the shader program needs to prepared and assembled.
+		 * <p>This function is called internally when the shader program needs to be prepared and assembled.
 		 * By extending and using the functions found in either EasyAGAL or EasierAGAL, both of which extend this class, 
 		 * write your Fragment Shader program within this function.</p>
 		 * <p>Note: If opcode has already been assigned to 'fragmentOpcode' then that code will be used, and this function will not be called.</p>
@@ -232,7 +232,7 @@ package com.barliesque.agal {
 		 * <p>Note:  Unless debug is true (set by EasyAGAL/EasierAGAL constructor) the opcode count will not be updated.</p>
 		 * @param	opcode		A string to be assigned or appended to the fragment opcode.
 		 * @param	append		True to append to the existing opcode, false to replace it.  (Default is false)
-		 * @see #getFragmeentOpcode()
+		 * @see #getFragmentOpcode()
 		 * @see #_fragmentShader()
 		 */
 		protected function setFragmentOpcode(opcode:String, append:Boolean = false):void {
@@ -341,7 +341,7 @@ package com.barliesque.agal {
 		}
 		
 		/**
-		 * Release all resources, including the shader program uploaded to the GPU.
+		 * Releases all resources, including the shader program uploaded to the GPU.
 		 * Calling upload() after dispose() has been called will result in the shader being recompiled and uploaded.
 		 * @see #upload()
 		 */
@@ -407,13 +407,13 @@ package com.barliesque.agal {
 		
 		
 		/**
-		 * { vc[] }  Use a register component to specify the index of a CONSTANT register.
+		 * { vc[] }  Use a component value to specify a CONSTANT register by its index.
 		 * Available only in vertex shaders.
 		 * @param	index
-		 * @return	Returns a CONST register in the format:  vc[vt0.x]  or  fc[ft3.y]
+		 * @return	Returns a CONST register in relative format, e.g. "vc[vt0.x]"
 		 */
 		protected function CONST_byIndex(index:IComponent):IRegister {
-			return new Register("CONST", "vc[" + (index as Component).reg + "]", null);  // "fc[" + (index as Component).reg + "]"
+			return new Register("CONST", "vc[" + (index as Component).reg + "]", null);
 		}
 		
 		
