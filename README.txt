@@ -23,6 +23,13 @@ as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
+4.Feb.2012
+- Compiled library to a SWC
+- Added BlendHSL macros including: hue, saturation, luminosity and color blend functions
+- Added ColorSpace macros, featuring conversion between RGB & HSL, desaturate, colorize, etc.
+- Added new functions to RegisterType:  isConst(),  isTemp() , isReadOnly()
+- Corrected an error in Component.as, register type was not passed on to component
+
 3.Dec.2011
 - Updated AGALMiniAssembler.as to official branch with support for rgba accessors
 - Minor corrections in docs
