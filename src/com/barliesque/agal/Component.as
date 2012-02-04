@@ -12,6 +12,7 @@ package com.barliesque.agal {
 		
 		public function Component(register:Register, prop:String) {
 			_register = register.reg + "." + prop;  // ComponentSelection.xyzwOnly(prop)
+			_type = register.type;
 			
 			if (!valid(prop)) throw new Error("Illegal component selection: " + _register);  // Catches something like this:  CONST[0]._("q")
 		}
