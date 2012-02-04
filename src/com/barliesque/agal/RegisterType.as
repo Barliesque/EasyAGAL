@@ -64,5 +64,44 @@ package com.barliesque.agal {
 		}
 		
 		
+		/**
+		 * Returns true if the specified parameter is a constant register.
+		 * @param	field	Any register or component selection
+		 * @return	Returns true if the specified parameter is a constant register.
+		 */
+		static public function isConst(field:*):Boolean {
+			return getType(field) == CONST;
+		}
+		
+		
+		/**
+		 * Returns true if the specified parameter is a temporary register.
+		 * @param	field	Any register or component selection
+		 * @return	Returns true if the specified parameter is a temporary register.
+		 */
+		static public function isTemp(field:*):Boolean {
+			return getType(field) == TEMP;
+		}
+		
+		
+		/**
+		 * Returns true if the specified parameter is a register that is read only.
+		 * @param	field	Any register or component selection
+		 * @return	Returns true if the specified parameter is a register that is read only.
+		 */
+		static public function isReadOnly(field:*):Boolean {
+			switch (getType(field)) {
+				case ATTRIBUTE:	return true;
+				case CONST:		return true;
+				case TEMP:		return false;
+				case VARYING:	return false;
+				case OUTPUT:	return false;
+				case SAMPLER:	return true;
+			}
+			throw new Error("Parameter is not a recognized AGAL register");
+			return null;
+		}
+		
+		
 	}
 }
