@@ -2,26 +2,31 @@
 EasyAGAL
 by David Barlia,  david@barliesque.com
 ---------------------------------
-https://github.com/Barliesque/EasyAGAL
+http://github.com/Barliesque/EasyAGAL
 
-EasyAGAL is an open source ActionScript library that assists developers in writing AGAL 
-("Adobe Graphics Assembly Language") by providing an AS3-based pseudo-AGAL command set.
-The resulting advantages include: 
+EasyAGAL is an open source ActionScript library that assists developers in writing 
+AGAL ("Adobe Graphics Assembly Language") by providing an AS3-based 
+pseudo-AGAL command set.  The resulting advantages include: 
 	
 	* Code completion and hinting
 	* More easy-to-read code
 	* Macros organized into libraries
 	* Dynamic code customization
 	
-EasyAGAL provides training wheels to learning AGAL as well as a structural foundation for writing shaders 
-for use with any other library. All methods of EasyAGAL maintain the same parameters, in the same order, 
-as AGAL opcodes; They are all documented with ASDoc tags providing help for every instruction and register 
-as you type, including the original AGAL opcodes.
+EasyAGAL provides training wheels to learning AGAL as well as a structural 
+foundation for writing shaders for use with any other library. All methods 
+of EasyAGAL maintain the same parameters, in the same order, as AGAL opcodes; 
+They are all documented with ASDoc tags providing help for every instruction and 
+register as you type, including the original AGAL opcodes.
 
 
 
 
 CHANGE LOG __________________________________________________________________________________________________________
+
+11.Feb.2012
+- Added new macro class -- Trig -- to contain macros for missing trigonometric functions
+- Improved documentation, particularly in IRegister
 
 4.Feb.2012
 - Compiled library to a SWC
