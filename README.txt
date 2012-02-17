@@ -24,6 +24,9 @@ register as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
+16.Feb.2012
+- Completed Trig.as macro library
+
 11.Feb.2012
 - Added new macro class -- Trig -- to contain macros for missing trigonometric functions
 - Improved documentation, particularly in IRegister
