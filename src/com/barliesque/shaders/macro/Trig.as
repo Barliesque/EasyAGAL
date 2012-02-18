@@ -237,11 +237,11 @@ package com.barliesque.shaders.macro {
 		 * @param	one			A component containing the constant value:  1.0
 		 */
 		static public function asinh(dest:IField, source:IField, one:IComponent):void {
-			// log(x + sqrt(x * x + 1.0));
+			// asinh(x) = log(x + sqrt(x * x + 1.0));
 			multiply(dest, source, source);
 			add(dest, dest, one);
 			squareRoot(dest, dest);
-			add(dest, source);
+			add(dest, dest, source);
 			log(dest, dest);
 		}
 		
