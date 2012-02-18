@@ -17,14 +17,14 @@ package com.barliesque.shaders.macro {
 		 * @param	dest	Register to store resulting HSL color value
 		 * @param	source	Register containing an RGB color value
 		 * @param	zero	A component containing the value:  0.0
-		 * @param	one		A component containing the value:  1.0
 		 * @param	two		A component containing the value:  2.0
 		 * @param	half	A component containing the value:  0.5
 		 * @param	temp	A temporary register to be used by this operation
 		 * @param	temp2	A temporary register to be used by this operation
 		 * @param	temp3	A temporary register to be used by this operation
 		 */
-		static public function rgb2hsl(dest:IRegister, source:IRegister, zero:IComponent, one:IComponent, two:IComponent, half:IComponent, 
+		static public function rgb2hsl(dest:IRegister, source:IRegister,
+										zero:IComponent, two:IComponent, half:IComponent, 
 										temp:IRegister, temp2:IRegister, temp3:IRegister):void {
 			
 			var hue:IComponent = dest.x;
@@ -47,7 +47,6 @@ package com.barliesque.shaders.macro {
 			// Set the LUMINANCE:  (Max + Min) / 2
 			add(lum, minRGB, maxRGB);
 			divide(lum, lum, two);
-			
 			
 			// Set the SATURATION = (lum < 0.5) ? (Delta / (Max + Min)) : (Delta / (2.0 - Max - Min))
 			add(temp.x, maxRGB, minRGB);
