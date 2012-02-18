@@ -97,8 +97,8 @@ package com.barliesque.agal {
 				case VARYING:	return false;
 				case OUTPUT:	return false;
 				case SAMPLER:	return true;
+				default:		throw new Error("Parameter is not a recognized AGAL register");
 			}
-			throw new Error("Parameter is not a recognized AGAL register");
 			return null;
 		}
 		
