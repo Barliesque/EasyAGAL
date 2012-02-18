@@ -25,6 +25,7 @@ register as you type, including the original AGAL opcodes.
 CHANGE LOG __________________________________________________________________________________________________________
 
 17.Feb.2012
+- Updated SWC library
 - Updated Docs with additions to Trig.as
 - Fixed error in Trig.as
 - Removed unused parameter "one" from ColorSpace::rgb2hsl()
