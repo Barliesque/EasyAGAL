@@ -17,8 +17,8 @@ package com.barliesque.shaders.macro {
 		 * dest = min(baseColor, blendColor)
 		 * Commutative - layer order does not matter.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function darken(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
 			min(dest.rgb, blendColor.rgb, baseColor.rgb);
@@ -31,8 +31,8 @@ package com.barliesque.shaders.macro {
 		 * Commutative - layer order does not matter.
 		 * dest = baseColor × blendColor
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function multiply(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
 			EasierAGAL.multiply(dest.rgb, blendColor.rgb, baseColor.rgb);
@@ -44,12 +44,12 @@ package com.barliesque.shaders.macro {
 		 * Non-commutative - layer order matters.
 		 * dest = (baseColor - 1.0 + blendColor) / blendColor
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	one					A component containing the value:  1.0
 		 */
-		static public function colorBurn(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
-			setIf_GreaterEqual(dest, dest, dest);
-			EasierAGAL.subtract(dest, baseColor, dest);
+		static public function colorBurn(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent):void {
+			EasierAGAL.subtract(dest, baseColor, one);
 			add(dest, dest, blendColor);
 			EasierAGAL.divide(dest, dest, blendColor);
 		}
@@ -60,12 +60,15 @@ package com.barliesque.shaders.macro {
 		 * dest = (baseColor + blendColor - 1.0)
 		 * Commutative - layer order does not matter.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	one					A component containing the value:  1.0
 		 */
-		static public function linearBurn(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
-			setIf_GreaterEqual(dest, blendColor, blendColor);  // set to 1
-			EasierAGAL.subtract(dest, baseColor, dest);
+		static public function linearBurn(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
+			EasierAGAL.subtract(dest, baseColor, one);
 			EasierAGAL.add(dest, dest, blendColor);
 		}
 		
@@ -78,8 +81,8 @@ package com.barliesque.shaders.macro {
 		 * Commutative - layer order does not matter.
 		 * dest = max(baseColor, blendColor)  Componentwise.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function lighten(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
 			max(dest, baseColor, blendColor);
@@ -91,10 +94,13 @@ package com.barliesque.shaders.macro {
 		 * Commutative - layer order does not matter.
 		 * dest = blendColor + baseColor - (blendColor * baseColor)
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function screen(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			EasierAGAL.multiply(dest.rgb, blendColor.rgb, baseColor.rgb);
 			EasierAGAL.subtract(dest.rgb, blendColor.rgb, dest.rgb);
 			EasierAGAL.add(dest.rgb, dest.rgb, baseColor.rgb);
@@ -106,12 +112,15 @@ package com.barliesque.shaders.macro {
 		 * Non-commutative - layer order matters.
 		 * dest = baseColor / (1 - blendColor)
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	one					A component containing the value:  1.0
 		 */
-		static public function colorDodge(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
-			setIf_GreaterEqual(dest, dest, dest);
-			EasierAGAL.subtract(dest, dest, blendColor);
+		static public function colorDodge(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
+			EasierAGAL.subtract(dest, one, blendColor);
 			EasierAGAL.divide(dest, baseColor, dest);
 		}
 		
@@ -120,8 +129,8 @@ package com.barliesque.shaders.macro {
 		 * Linear Dodge.  Also called additive blend, as the colors are simply added together.
 		 * dest = baseColor + blendColor
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function linearDodge(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
 			add(dest, blendColor, baseColor);
@@ -136,14 +145,17 @@ package com.barliesque.shaders.macro {
 		 * Non-commutative - layer order matters.
 		 * Overlay is the same as Hard Light commuted.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 * @param	half				A component containing the value:  0.5
 		 * @param	temp				A register temporarily utilized for this calculation
 		 * @param	temp2				A register temporarily utilized for this calculation
+		 * @param	temp3				A register temporarily utilized for this calculation
 		 */
 		static public function overlay(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent, half:IComponent, temp:IRegister, temp2:IRegister, temp3:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
 			
 			// High:  temp = 1 - ((1 - blend) * (1 - base) * 2)
 			EasierAGAL.subtract(temp.rgb, one, blendColor.rgb);
@@ -161,18 +173,21 @@ package com.barliesque.shaders.macro {
 		}
 		
 		
-		// dest = ( Base - 2*Base*Blend + 2*Blend ) * Base
-		
 		/**
 		 * Soft-Light blending both darkens and lightens, depending on the blend color. 
 		 * If the blend color is lighter than 50%, the result is lightened as if it were dodged. 
 		 * If the blend color is darker than 50% gray, the image is darkened as if it were burned in. 
 		 * 
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function softLight(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
+			// dest = ( Base - 2*Base*Blend + 2*Blend ) * Base
+			
 			EasierAGAL.add(dest.rgb, baseColor.rgb, baseColor.rgb);
 			EasierAGAL.multiply(dest.rgb, dest.rgb, blendColor.rgb);
 			EasierAGAL.subtract(dest.rgb, baseColor.rgb, dest.rgb);
@@ -187,12 +202,13 @@ package com.barliesque.shaders.macro {
 		 * Non-commutative - layer order matters.
 		 * Hard Light is the same as Overlay commuted.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 * @param	half				A component containing the value:  0.5
 		 * @param	temp				A register temporarily utilized for this calculation
 		 * @param	temp2				A register temporarily utilized for this calculation
+		 * @param	temp3				A register temporarily utilized for this calculation
 		 */
 		static public function hardLight(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent, half:IComponent, temp:IRegister, temp2:IRegister, temp3:IRegister):void {
 			// Call overlay, swapping the base and blend colors
@@ -200,11 +216,10 @@ package com.barliesque.shaders.macro {
 		}
 		
 		
-		
 		/**
-		 * Vivid Light:  A combination of color burn and color dodge.	</br>
-		 * Non-commutative - Layer order matters.						</br>
-		 * This macro contains 14 instructions.							</br>
+		 * Vivid Light:  A combination of color burn and color dodge.
+		 * Non-commutative - Layer order matters.
+		 * This macro contains 14 instructions.
 		 * @param	dest				Register to store resulting RGB color.
 		 * @param	baseColor			The RGB color of the pixel underneath.
 		 * @param	blendColor			The RGB color of the pixel on top.
@@ -215,6 +230,9 @@ package com.barliesque.shaders.macro {
 		 * @param	temp3				A register temporarily utilized for this calculation
 		 */
 		static public function vividLight(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent, half:IComponent, temp:IRegister, temp2:IRegister, temp3:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			var burn:IField = temp.rgb;
 			var dodge:IField = temp2.rgb;
 			
@@ -239,13 +257,17 @@ package com.barliesque.shaders.macro {
 		 * Linear Light.  Also known as Mod2x, ideal for blending textures with pre-rendered lightmaps.
 		 * Combines the effects of linear burn and linear dodge
 		 * Non-commutative - Layer order matters.
-		 * dest = (Base + Blend×2 - 1)
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 */
 		static public function linearLight(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
+			// dest = (Base + Blend×2 - 1)
+			
 			EasierAGAL.subtract(dest, baseColor, one);
 			EasierAGAL.add(dest, dest, blendColor);
 			EasierAGAL.add(dest, dest, blendColor);
@@ -253,20 +275,23 @@ package com.barliesque.shaders.macro {
 		
 		
 		/**
-		* Pin Light:
-		* Non-commutative - Layer order matters.
-		* A combination of darken and lighten.
-		* dest = (Blend > ½) ? max(Base,2×Blend-1) : min(Base,2×Blend)
-		* @param	dest				Register to store resulting RGB color.
-		* @param	blendColor			The RGB color of the pixel on top.
-		* @param	baseColor			The RGB color of the pixel underneath.
-		* @param	one					A component containing the value:  1.0
-		* @param	half				A component containing the value:  0.5
-		* @param	temp				A register temporarily utilized for this calculation
-		* @param	temp2				A register temporarily utilized for this calculation
-		* @param	temp3				A register temporarily utilized for this calculation
+		 * Pin Light:
+		 * Non-commutative - Layer order matters.
+		 * A combination of darken and lighten.
+		 * @param	dest				Register to store resulting RGB color.
+		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	one					A component containing the value:  1.0
+		 * @param	half				A component containing the value:  0.5
+		 * @param	temp				A register temporarily utilized for this calculation
+		 * @param	temp2				A register temporarily utilized for this calculation
+		 * @param	temp3				A register temporarily utilized for this calculation
 		 */
 		static public function pinLight(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent, half:IComponent, temp:IRegister, temp2:IRegister, temp3:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
+			// dest = (Blend > ½) ? max(Base,2×Blend-1) : min(Base,2×Blend)
 			
 			var darken:IField = temp.rgb;
 			var lighten:IField = temp2.rgb;
@@ -287,11 +312,14 @@ package com.barliesque.shaders.macro {
 		 * Hard Mix.
 		 * Channels are set strictly to 0.0 or 1.0, by rounding off a vivid light blend.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 */
 		static public function hardMix(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			// Yes, hard mix can be simplified down to just two instructions!
 			EasierAGAL.subtract(dest.rgb, one, blendColor);
 			setIf_LessThan(dest.rgb, dest.rgb, baseColor.rgb);
@@ -302,26 +330,32 @@ package com.barliesque.shaders.macro {
 		
 		
 		/**
-		 * Difference
-		 * dest = abs( Base - Blend )
+		 * Difference blend
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function difference(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
+			
+			// dest = abs( Base - Blend )
+			
 			EasierAGAL.subtract(dest, baseColor, blendColor);
 			abs(dest, dest);
 		}
 		
 		
 		/**
-		 * Exclusion
-		 * dest = (-2 × Base × Blend) + Blend + Base
+		 * Exclusion blend
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function exclusion(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
+			// dest = (-2 × Base × Blend) + Blend + Base
+			
 			EasierAGAL.multiply(dest, blendColor, baseColor);
 			EasierAGAL.add(dest, dest, dest);
 			EasierAGAL.subtract(dest, blendColor, dest);
@@ -333,19 +367,20 @@ package com.barliesque.shaders.macro {
 		 * Subtract.  (Base - Blend)
 		 * The blend color can only darken the base color.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function subtract(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
 			EasierAGAL.subtract(dest.rgb, baseColor.rgb, blendColor.rgb);
 		}
 		
+		
 		/**
 		 * Divide.  (Base / Blend)
 		 * The blend color can only brighten the base color.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 */
 		static public function divide(dest:IRegister, baseColor:IRegister, blendColor:IRegister):void {
 			EasierAGAL.divide(dest, baseColor, blendColor);
@@ -357,8 +392,8 @@ package com.barliesque.shaders.macro {
 		 * Average blending returns the average of the two colors.
 		 * dest = (blend + base) / 2
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	half				A component containing the value:  0.5
 		 */
 		static public function average(dest:IRegister, baseColor:IRegister, blendColor:IRegister, half:IComponent):void {
@@ -371,23 +406,27 @@ package com.barliesque.shaders.macro {
 		 * Non-commutative - Layer order matters.
 		 * dest = (base * base / (1.0 - blend))
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 * @param	temp				A register temporarily utilized for this calculation
 		 */
 		static public function reflect(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent, temp:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			EasierAGAL.multiply(dest, baseColor, baseColor);
 			EasierAGAL.subtract(temp, one, blendColor);
 			EasierAGAL.divide(dest, dest, temp);
 		}
 		
+		
 		/**
 		 * Glow blend.  Similar to Vivid Light, but requires only 3 instructions compared to Vivid Light's 14 instructions.
 		 * Reflect mode commuted.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 * @param	temp				A register temporarily utilized for this calculation
 		 */
@@ -400,11 +439,14 @@ package com.barliesque.shaders.macro {
 		 * Commutative - Layer order does not matter.
 		 * dest = 1.0 - abs(1.0 - base - blend)
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	one					A component containing the value:  1.0
 		 */
 		static public function negation(dest:IRegister, baseColor:IRegister, blendColor:IRegister, one:IComponent):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			EasierAGAL.subtract(dest, one, baseColor);
 			EasierAGAL.subtract(dest, dest, blendColor);
 			EasierAGAL.abs(dest, dest);
@@ -415,11 +457,14 @@ package com.barliesque.shaders.macro {
 		 * Phoenix blend.
 		 * Commutative - Layer order does not matter.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	temp				A register temporarily utilized for this calculation
 		 */
 		static public function phoenix(dest:IRegister, baseColor:IRegister, blendColor:IRegister, temp:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			// dest = min(A,B) - max(A,B) + 1.0
 			min(dest, blendColor, baseColor);
 			max(temp, blendColor, baseColor);
@@ -433,8 +478,8 @@ package com.barliesque.shaders.macro {
 		/**
 		 * Grain Extract blend mode, as found in Gimp.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	half				A component containing the value:  0.5
 		 */
 		static public function grainExtract(dest:IRegister, baseColor:IRegister, blendColor:IRegister, half:IComponent):void {
@@ -445,8 +490,8 @@ package com.barliesque.shaders.macro {
 		/**
 		 * Grain Merge blend mode, as found in Gimp.
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	half				A component containing the value:  0.5
 		 */
 		static public function grainMerge(dest:IRegister, baseColor:IRegister, blendColor:IRegister, half:IComponent):void {
@@ -460,10 +505,15 @@ package com.barliesque.shaders.macro {
 		 * Lighter Color - Selects the color with the brightest luminance.
 		 * [ 16 Instructions ]
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	rgbBlendColor		The RGB color of the pixel on top.
-		 * @param	rgbBaseColor		The RGB color of the pixel underneath.
+		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	temp				A register temporarily utilized for this calculation
+		 * @param	temp2				A register temporarily utilized for this calculation
 		 */
 		static public function lighterColor(dest:IRegister, baseColor:IRegister, blendColor:IRegister, temp:IRegister, temp2:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			var blendLum:IComponent = temp.x;
 			var baseLum:IComponent = temp.y;
 			var minRGB:IComponent = temp.z;
@@ -493,10 +543,15 @@ package com.barliesque.shaders.macro {
 		 * This macro temporarily calculates only the luminances of the specified colors to make the selection.
 		 * [ 16 Instructions ]
 		 * @param	dest				Register to store resulting RGB color.
-		 * @param	blendColor			The RGB color of the pixel on top.
 		 * @param	baseColor			The RGB color of the pixel underneath.
+		 * @param	blendColor			The RGB color of the pixel on top.
+		 * @param	temp				A register temporarily utilized for this calculation
+		 * @param	temp2				A register temporarily utilized for this calculation
 		 */
 		static public function darkerColor(dest:IRegister, baseColor:IRegister, blendColor:IRegister, temp:IRegister, temp2:IRegister):void {
+			if (dest == baseColor) throw new Error("Destination and base color can not be the same register.");
+			if (dest == blendColor) throw new Error("Destination and blend color can not be the same register.");
+			
 			var blendLum:IComponent = temp.x;
 			var baseLum:IComponent = temp.y;
 			var minRGB:IComponent = temp.z;
