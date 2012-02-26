@@ -24,6 +24,11 @@ register as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
+25.Feb.2012
+- New example:  a shader that renders lighting
+- Corrected an embarassing number of mistakes in the docs for Blend.as
+- Added checks to Blend.as where use of the same register for dest and either base or blend color fowls up the calculation
+
 17.Feb.2012
 - Updated SWC library
 - Updated Docs with additions to Trig.as
