@@ -42,6 +42,8 @@ package com.barliesque.agal {
 		public function get b():Component { return new Component(this, "b"); }
 		public function get a():Component { return new Component(this, "a"); }
 		
+		public function get xy():ComponentSelection { return new ComponentSelection(this, "xy"); }
+		
 		public function get xyz():ComponentSelection { return new ComponentSelection(this, "xyz"); }
 		public function get rgb():ComponentSelection { return new ComponentSelection(this, "rgb"); }
 		
