@@ -24,6 +24,9 @@ register as you type, including the original AGAL opcodes.
 
 CHANGE LOG __________________________________________________________________________________________________________
 
+- New alias management functions!   assign()  & unassign()
+- Added .xy as a standard component selection
+
 25.Feb.2012
 - New example:  a shader that renders lighting
 - Corrected an embarassing number of mistakes in the docs for Blend.as
