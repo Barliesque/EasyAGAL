@@ -20,6 +20,11 @@ package com.barliesque.agal {
 			}
 		}
 		
+		public function toString():String {
+			return '[ComponentSelection name="' + _register + '" alias="' + RegisterData.getAlias(this) + '"]';
+		}
+		
+		
 		/// @private
 		internal function get reg():String { 
 			return _register;

@@ -7,6 +7,8 @@ package com.barliesque.agal {
 	 * 
 	 * @author David Barlia
 	 */
-	public interface ISampler { }
+	public interface ISampler {
+		function toString():String;
+	}
 	
 }

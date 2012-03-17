@@ -18,6 +18,10 @@ package com.barliesque.agal {
 			_index = index;
 		}
 		
+		public function toString():String {
+			return '[Register name="' + reg + '" alias="' + RegisterData.getAlias(this) + '"]';
+		}
+		
 		internal function get reg():String { 
 			var code:String = (Assembler.assemblingVertex ? _vertexReg : _fragmentReg) + ((_index >= 0) ? _index : "");
 			if (code == null) {

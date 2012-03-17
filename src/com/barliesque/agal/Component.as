@@ -17,6 +17,10 @@ package com.barliesque.agal {
 			if (!valid(prop)) throw new Error("Illegal component selection: " + _register);  // Catches something like this:  CONST[0]._("q")
 		}
 		
+		public function toString():String {
+			return '[Component name="' + _register + '" alias="' + RegisterData.getAlias(this) + '"]';
+		}
+		
 		/// @private
 		internal function get reg():String { 
 			return _register;

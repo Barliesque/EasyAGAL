@@ -13,6 +13,10 @@ package com.barliesque.agal {
 			_index = index;
 		}
 		
+		public function toString():String {
+			return '[Sampler name="fs' + _index + '"]';
+		}
+		
 		internal function get reg():String { 
 			if (Assembler.assemblingVertex) throw new Error("SAMPLER registers not available in Vertex Shaders");
 			return "fs" + _index;
