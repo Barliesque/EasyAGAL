@@ -17,16 +17,17 @@ package com.barliesque.agal {
 		private var _context:Context3D;
 		
 		// Register definitions
-		static private var _ATTRIBUTE:Vector.<IRegister>;
-		static private var _CONST:Vector.<IRegister>;
-		static private var _TEMP:Vector.<IRegister>;
-		static private var _OUTPUT:Register;
-		static private var _VARYING:Vector.<IRegister>;
-		static private var _SAMPLER:Vector.<ISampler>;
-		static private var initialized:Boolean = false;
+		static private var _VARYING:Vector.<IRegister> = initVarying();
+		static private var _ATTRIBUTE:Vector.<IRegister> = initAttribute();
+		static private var _CONST:Vector.<IRegister> = initConst();
+		static private var _TEMP:Vector.<IRegister> = initTemp();
+		static private var _SAMPLER:Vector.<ISampler> = initSampler();
+		static private var _OUTPUT:Register = initOutput();
 		
 		private var debug:Boolean;
 		private var assemblyDebug:Boolean;
+		
+		static internal var test:ITest;
 		
 		//---------------------------------------------------------
 		
@@ -123,6 +124,31 @@ package com.barliesque.agal {
 			}
 			return ((lineNumbering || formatAS3) ? formatOpcode(_fragmentOpcode, lineNumbering, formatAS3) : _fragmentOpcode);
 		}
+		
+		
+		/**
+		 * Assigns a register (or subset of its components) to a named alias.  Attempting to assign an alias to a register or component that has already been assigned will cause an error to be thrown bringing the conflict to light.<br/>
+		 * <b>Usage:</b>  <code>var myAlias:IRegister = assign(TEMP[0], "myAlias");</code><br/>
+		 * <code>var position:IField = assign(TEMP[0].xyz, "position");</code>
+		 * @param	field	A register, component or component selection.  Sampler registers may not be assigned aliases.
+		 * @param	alias	A unique string identifier.
+		 * @return	Returns the value passed into the field parameter, allowing alias and variable assignment in a single statement syntax -- See example usage above.
+		 */
+		public function assign(field:IField, alias:String):* {
+			return RegisterData.assign(field, alias);
+		}
+		
+		/**
+		 * Frees a register (or subset of components) for assignment to a different alias.
+		 * <b>Usage:</b>  <code>myAlias = unassign(TEMP[0].xyz);</code></br/>
+		 * <code>myAlias = unassign(myAlias);</code>
+		 * @param	field	A register, component or component selection.
+		 * @return	Always returns null, allowing alias assignment and variable to be cleared in a single statement syntax -- See example usage above.
+		 */
+		static public function unassign(field:IField):* {
+			return RegisterData.unassign(field);
+		}
+		
 		
 		/** The Program3D instance created by calling upload()  */
 		public function get program():Program3D { return _program; }
@@ -271,9 +297,9 @@ package com.barliesque.agal {
 			if (Assembler.isPreparing) return;  // Prevent an inifinte loop if called during prep
 			Assembler.isPreparing = true;
 			if (_vertexOpcode == null || _vertexOpcode == "") {
-				init();
 				_vertexOpcode = "";
 				Assembler.prep(true, assemblyDebug);
+				RegisterData.clear(true);
 				_vertexShader();
 				_vertexOpcode += Assembler.code;
 				_vertexInstructions = Assembler.instructionCount;
@@ -286,9 +312,9 @@ package com.barliesque.agal {
 			if (Assembler.isPreparing) return;  // Prevent an inifinte loop if called during prep
 			Assembler.isPreparing = true;
 			if (_fragmentOpcode == null || _fragmentOpcode == "") {
-				init();
 				_fragmentOpcode = "";
 				Assembler.prep(false, assemblyDebug);
+				RegisterData.clear(true);
 				_fragmentShader();
 				_fragmentOpcode += Assembler.code;
 				_fragmentInstructions = Assembler.instructionCount;
@@ -372,39 +398,56 @@ package com.barliesque.agal {
 			// }
 		}
 		
-		//{ REGISTERS:  Initialization and Access
-		
+		//{ REGISTERS:  Initialization
 		
 		/** @private */
-		private function init():void {
-			if (initialized) return;
-			var i:int;
-			
-			_ATTRIBUTE = new Vector.<IRegister>;
-			for (i = 0; i < RegisterType.ATTRIBUTE_COUNT; i++)  _ATTRIBUTE.push(new Register(RegisterType.ATTRIBUTE, "va", null, i));
-			_ATTRIBUTE.fixed = true;
-			
-			_CONST = new Vector.<IRegister>;
-			for (i = 0; i < RegisterType.VCONST_COUNT; i++)  _CONST.push(new Register(RegisterType.CONST, "vc", (i < RegisterType.FCONST_COUNT) ? "fc" : null, i));
-			_CONST.fixed = true;
-			
-			_TEMP = new Vector.<IRegister>;
-			for (i = 0; i < RegisterType.TEMP_COUNT; i++)  _TEMP.push(new Register(RegisterType.TEMP, "vt", "ft", i));
-			_TEMP.fixed = true;
-			
-			_VARYING = new Vector.<IRegister>;
-			for (i = 0; i < RegisterType.VARYING_COUNT; i++)  _VARYING.push(new Register(RegisterType.VARYING, "v", "v", i));
-			_VARYING.fixed = true;
-			
-			_SAMPLER = new Vector.<ISampler>;
-			for (i = 0; i < RegisterType.SAMPLER_COUNT; i++)  _SAMPLER.push(new Sampler(i));
-			_SAMPLER.fixed = true;
-			
-			_OUTPUT = new Register(RegisterType.OUTPUT, "op", "oc");
-			
-			initialized = true;
+		static private function initVarying():Vector.<IRegister> {
+			var register:Vector.<IRegister> = new Vector.<IRegister>;
+			for (var i:int = 0; i < RegisterType.VARYING_COUNT; i++)  register.push(new Register(RegisterType.VARYING, "v", "v", i));
+			register.fixed = true;
+			return register;
 		}
 		
+		/** @private */
+		static private function initAttribute():Vector.<IRegister> {
+			var register:Vector.<IRegister> = new Vector.<IRegister>;
+			for (var i:int = 0; i < RegisterType.ATTRIBUTE_COUNT; i++)  register.push(new Register(RegisterType.ATTRIBUTE, "va", null, i));
+			register.fixed = true;
+			return register;
+		}
+		
+		/** @private */
+		static private function initConst():Vector.<IRegister> {
+			var register:Vector.<IRegister> = new Vector.<IRegister>;
+			for (var i:int = 0; i < RegisterType.VCONST_COUNT; i++)  register.push(new Register(RegisterType.CONST, "vc", (i < RegisterType.FCONST_COUNT) ? "fc" : null, i));
+			register.fixed = true;
+			return register;
+		}
+		
+		/** @private */
+		static private function initTemp():Vector.<IRegister> {
+			var register:Vector.<IRegister> = new Vector.<IRegister>;
+			for (var i:int = 0; i < RegisterType.TEMP_COUNT; i++)  register.push(new Register(RegisterType.TEMP, "vt", "ft", i));
+			register.fixed = true;
+			return register;
+		}
+		
+		/** @private */
+		static private function initSampler():Vector.<ISampler> {
+			var register:Vector.<ISampler> = new Vector.<ISampler>;
+			for (var i:int = 0; i < RegisterType.SAMPLER_COUNT; i++)  register.push(new Sampler(i));
+			register.fixed = true;
+			return register;
+		}
+		
+		/** @private */
+		static private function initOutput():Register {
+			return new Register(RegisterType.OUTPUT, "op", "oc");
+		}
+		
+		//} -----------------------------------------------------------------		
+		
+		//{ REGISTERS:  Access
 		
 		/**
 		 * { vc[] }  Use a component value to specify a CONSTANT register by its index.
