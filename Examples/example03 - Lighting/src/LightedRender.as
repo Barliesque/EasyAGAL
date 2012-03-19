@@ -27,15 +27,14 @@ package {
 		private var indexBuffer:IndexBuffer3D;
 		private var texture3D:Texture;
 		
-		// The varying registers to be used to connect the vertex and fragment shaders
-		private var vertexNormal:IRegister;
-		private var vertexUV:IRegister;
-		private var vertexPos:IRegister;
-		private var lightPos:IRegister;
+		// Aliases for the varying registers to be used to connect the vertex and fragment shaders
+		private var vertexUV:IRegister		 = assign(VARYING[0], "vertexUV");
+		private var vertexNormal:IRegister   = assign(VARYING[1], "vertexNormal");
+		private var vertexPos:IRegister      = assign(VARYING[2], "vertexPos");
+		private var lightPos:IRegister       = assign(VARYING[3], "lightPos");
 		
 		
 		/// x,y,z, nx,ny,nz, u,v
-		//public const DATA32_PER_VERTEX:uint = 8;
 		public const DATA32_PER_VERTEX:uint = 8;
 		
 		
@@ -46,10 +45,12 @@ package {
 		
 		
 		override protected function _vertexShader():void {
-			vertexUV = VARYING[0];
-			vertexNormal = VARYING[1];
-			vertexPos = VARYING[2];
-			lightPos = VARYING[3];
+			//vertexUV = assign(VARYING[0], "vertexUV");
+			//vertexNormal = assign(VARYING[1], "vertexNormal");
+			//vertexPos = assign(VARYING[2], "vertexPos");
+			//lightPos = assign(VARYING[3], "lightPos");
+			
+			var viewMatrix:IRegister = assign(CONST[0], "viewMatrix");
 			
 			// Pass texture uv to the fragment shader
 			move(vertexUV, ATTRIBUTE[2]);
@@ -58,23 +59,23 @@ package {
 			move(lightPos, CONST[4]);
 			
 			// Transform vertex normal and pass to the fragment shader
-			multiply4x4(vertexNormal, ATTRIBUTE[1], CONST[0]);
+			multiply4x4(vertexNormal, ATTRIBUTE[1], viewMatrix);
 			
 			// Transform vertex position, pass to fragment and output
-			multiply4x4(vertexPos, ATTRIBUTE[0], CONST[0]);
-			multiply4x4(OUTPUT, ATTRIBUTE[0], CONST[0]);
+			multiply4x4(vertexPos, ATTRIBUTE[0], viewMatrix);
+			multiply4x4(OUTPUT, ATTRIBUTE[0], viewMatrix);
 		}
 		
 		
 		override protected function _fragmentShader():void {
 			
-			var textureRGB:IRegister = TEMP[0];
-			var lightNormal:IField = TEMP[1].xyz;
-			var keyValue:IComponent = TEMP[2].x;
-			var attenuation:IComponent = TEMP[2].y;
-			var pixelToLight:IField = TEMP[3].xyz;
-			var finalLight:IRegister = TEMP[4];
-			var finalColor:IRegister = TEMP[5];
+			var textureRGB:IRegister = assign(TEMP[0], "textureRGB");
+			var lightNormal:IField = assign(TEMP[1].xyz, "lightNormal");
+			var keyValue:IComponent = assign(TEMP[2].x, "keyValue");			
+			var attenuation:IComponent = assign(TEMP[2].y, "attenuation");
+			var pixelToLight:IField = assign(TEMP[3].xyz, "pixelToLight");
+			var finalLight:IRegister = assign(TEMP[4], "finalLight");
+			var finalColor:IRegister = assign(TEMP[5], "finalColor");
 			
 			var lightColor:IField = CONST[0].rgb;
 			var lightStrenth:IComponent = CONST[0].w;
@@ -110,7 +111,7 @@ package {
 			multiply(finalLight, finalLight, lightColor);
 			add(finalLight, finalLight, ambient);
 			
-			// Finally, blend with the texture sample and output
+			// Finally, blend with the texture sample and output (Try using any of the following blends)
 			Blend.hardLight(finalColor, textureRGB, finalLight, one, half, TEMP[1], TEMP[2], TEMP[3]);
 			//Blend.glow(finalColor, finalLight, textureRGB, one, TEMP[1]);
 			//Blend.softLight(finalColor, finalLight, textureRGB);
@@ -128,9 +129,6 @@ package {
 		 * @param	textureBitmap	An image to be used as the texture
 		 */
 		public function setGeometry(vertices:Vector.<Number>, indices:Vector.<uint>, textureBitmap:BitmapData):void {
-			
-			trace("Vertex count: " + (vertices.length / DATA32_PER_VERTEX));
-			trace("Face count: " + (indices.length / 3));  // 3 vertices per triangle
 			
 			// Upload vertex data
 			if (vertexBuffer != null) vertexBuffer.dispose();
@@ -150,9 +148,6 @@ package {
 		
 		
 		public function render(viewMatrix:Matrix3D, lightPos:Vector3D, lightColor:Vector3D, ambient:Vector3D):void {
-			// Tell the 3D context that this is the current shader program to be rendered
-			context.setProgram(program);
-			
 			// Set ATTRIBUTE Registers to point at vertex data
 			context.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3); // x,y,z
 			context.setVertexBufferAt(1, vertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_3); // nx,ny,nz
@@ -163,13 +158,17 @@ package {
 			
 			// Pass viewMatrix into constant registers
 			context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, viewMatrix);
+			
 			// Pass a vector for the (world space) location of the light
 			context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, vec3DtoVec(lightPos), 1);
 			
-			// Pass 
+			// Pass light parameters
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, vec3DtoVec(lightColor), 1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, vec3DtoVec(ambient), 1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.<Number>([0, 1/3, 1, 0.5]), 1);
+			
+			// Tell the 3D context that this is the current shader program to be rendered
+			context.setProgram(program);
 			
 			// Render the shader!
 			context.drawTriangles(indexBuffer);

@@ -24,6 +24,9 @@ package {
 		private var stage3D:Stage3D;
 		private var shader:LightedRender;
 		
+		[Embed(source='media/created-with.png')]
+		public var createdWith:Class;
+		
 		[Embed(source='media/box.png')]
 		public var textureClass:Class;
 		
@@ -39,7 +42,6 @@ package {
 		private var ambient:Vector3D;
 		
 		public function LightingExample():void {
-			
 			// Set the default stage behavior
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
@@ -139,8 +141,13 @@ package {
 			ambient = new Vector3D(0.00, 0.05, 0.1);
 			lightPos = new Vector3D(1.0, 1.0, -4.0, 0.2);
 			
-			// ...and start rendering frames!
+			// Start rendering frames
 			addEventListener(Event.ENTER_FRAME, renderFrame, false, 0, true);
+			
+			// Created with EasyAGAL!
+			var bitmap:Bitmap = new createdWith();
+			bitmap.y = CONTEXT_HEIGHT - bitmap.height;
+			addChild(bitmap);
 		}
 		
 		
