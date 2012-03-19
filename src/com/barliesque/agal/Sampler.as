@@ -14,7 +14,7 @@ package com.barliesque.agal {
 		}
 		
 		public function toString():String {
-			return '[Sampler name="fs' + _index + '"]';
+			return '[Sampler name="fs' + _index + '" alias="' + RegisterData.currentData.getAlias(this) + '"]';
 		}
 		
 		internal function get reg():String { 

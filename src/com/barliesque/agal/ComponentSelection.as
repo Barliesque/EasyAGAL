@@ -21,7 +21,7 @@ package com.barliesque.agal {
 		}
 		
 		public function toString():String {
-			return '[ComponentSelection name="' + _register + '" alias="' + RegisterData.getAlias(this) + '"]';
+			return '[ComponentSelection name="' + _register + '" alias="' + RegisterData.currentData.getAlias(this) + '"]';
 		}
 		
 		

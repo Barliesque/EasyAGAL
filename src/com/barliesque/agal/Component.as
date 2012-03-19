@@ -18,7 +18,7 @@ package com.barliesque.agal {
 		}
 		
 		public function toString():String {
-			return '[Component name="' + _register + '" alias="' + RegisterData.getAlias(this) + '"]';
+			return '[Component name="' + _register + '" alias="' + RegisterData.currentData.getAlias(this) + '"]';
 		}
 		
 		/// @private
