@@ -27,10 +27,11 @@ package com.barliesque.agal {
 		static public const FILTER_NEAREST:String 		= "nearest";
 		static public const FILTER_LINEAR:String 		= "linear";
 		
-		/** A detailed discussion of centroid texture sampling may be found at:  http://www.opengl.org/pipeline/article/vol003_6/  */
+		/*  NOT SUPPORTED BY STAGE3D
 		static public const SPECIAL_CENTROID:String 	= "centroid";
 		static public const SPECIAL_SINGLE:String 		= "single";
 		static public const SPECIAL_DEPTH:String 		= "depth";
+		*/
 		
 		static public const MODE_REPEAT:String 			= "repeat";
 		static public const MODE_WRAP:String 			= "wrap";
