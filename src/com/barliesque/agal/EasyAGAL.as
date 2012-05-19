@@ -16,12 +16,12 @@ package com.barliesque.agal {
 	 * If you're overcome with a need to give me credit, I will not be offended, but
 	 * no such act is required.  If you come up with improvements, I ask that you 
 	 * drop me an update.  In any case, this header should stay where it is, 
-	 * unalterred, wherever you may wish to spread it.
+	 * unalterred, wherever you may wish to distribute this library.
 	 */
 	public class EasyAGAL extends EasyBase {
 		
 		/**
-		 * @param	debug				Set to true to enable comments to be added to opcode, and opcode trace upon rejection of program upload.
+		 * @param	debug				Set to true to enable basic debugging features:  alias management, comments added to opcode, opcode trace upon rejection of program upload.
 		 * @param	assemblyDebug		Set to true for opcode output from AGALMiniAssembler
 		 */
 		public function EasyAGAL(debug:Boolean = true, assemblyDebug:Boolean = false) {

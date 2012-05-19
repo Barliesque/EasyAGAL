@@ -90,19 +90,17 @@ package com.barliesque.shaders.macro {
 		static public function selectByIndex(dest:IField, index:IComponent, temp:IRegister, temp2:IRegister, ...options):void {
 			
 			var currentIndex:IComponent = temp.x;
-			subtract(currentIndex, index, index);
-			
 			var selected:IComponent = temp.y;
+			var compare:IComponent = temp.z;
+			var one:IComponent = temp.w;
+			
+			// Remove fractional value
 			fractional(selected, index);
 			subtract(selected, index, selected);
 			
-			var one:IComponent = temp.z;
-			setIf_GreaterEqual(one, index, index);
-			
-			var compare:IComponent = temp.w;
-			
-			// Set dest to zero
-			subtract(dest, options[0], options[0]);
+			// Set dest and currentIndex to zero
+			subtract(dest, selected, selected);
+			move(currentIndex, dest);
 			
 			for (var i:int = 0; i < options.length; i++ ) {
 				setIf_Equal(compare, currentIndex, selected, temp2);
@@ -110,6 +108,10 @@ package com.barliesque.shaders.macro {
 				add(dest, dest, temp2);
 				
 				if (i < options.length - 1) {
+					if (i == 0) {
+						// Set one to 1.0
+						setIf_GreaterEqual(one, selected, selected);
+					}
 					add(currentIndex, currentIndex, one);
 				}
 			}

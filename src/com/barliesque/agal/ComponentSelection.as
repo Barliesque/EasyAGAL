@@ -21,9 +21,15 @@ package com.barliesque.agal {
 		}
 		
 		public function toString():String {
-			return '[ComponentSelection name="' + _register + '" alias="' + RegisterData.currentData.getAlias(this) + '"]';
+			if (!Assembler.isPreparing) return '[ComponentSelection]';
+			if (RegisterData.currentData == null) return '[ComponentSelection name="' + _register + '"]';
+			return '[ComponentSelection name="' + _register + '" alias="' + alias + '"]';
 		}
 		
+		public function get alias():String {
+			if (RegisterData.currentData == null) return null;
+			return RegisterData.currentData.getAlias(this);
+		}
 		
 		/// @private
 		internal function get reg():String { 

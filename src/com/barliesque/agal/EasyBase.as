@@ -27,17 +27,20 @@ package com.barliesque.agal {
 		private var debug:Boolean;
 		private var assemblyDebug:Boolean;
 		
+		private var registerData:RegisterData;
+		
 		static internal var test:ITest;
 		
 		//---------------------------------------------------------
 		
 		/**
-		 * @param	debug				Set to true to enable comments to be added to opcode, and opcode trace upon rejection of program upload.
+		 * @param	debug				Set to true to enable basic debugging features:  alias management, comments added to opcode, opcode trace upon rejection of program upload.
 		 * @param	assemblyDebug		Set to true for opcode output from AGALMiniAssembler
 		 */
 		public function EasyBase(debug:Boolean = true, assemblyDebug:Boolean = false) {
 			this.debug = debug;
 			this.assemblyDebug = assemblyDebug;
+			if (debug) registerData = new RegisterData();
 		}
 		
 		
@@ -125,29 +128,49 @@ package com.barliesque.agal {
 			return ((lineNumbering || formatAS3) ? formatOpcode(_fragmentOpcode, lineNumbering, formatAS3) : _fragmentOpcode);
 		}
 		
+		//-------------------------------------------------------
 		
 		/**
-		 * Assigns a register (or subset of its components) to a named alias.  Attempting to assign an alias to a register or component that has already been assigned will cause an error to be thrown bringing the conflict to light.<br/>
+		 * <p>Assigns a register (or subset of its components) to a named alias.
+		 * Aliases can only be assigned within the scope of <i>_fragmentShader()</i> or <i>_vertexShader()</i>.
+		 * Attempting to assign an alias to a register or component that has already been assigned
+		 * will cause an error to be thrown, bringing the conflict to light.  Use <i>unassign()</i> before reassigning TEMP registers to different aliases.</p>
+		 * <p>Note:  All alias management is disabled when <i>EasyBase::debug</i> is false.  (See EasyAGAL/EasierAGAL constructors)
+		 * 
 		 * <b>Usage:</b>  <code>var myAlias:IRegister = assign(TEMP[0], "myAlias");</code><br/>
 		 * <code>var position:IField = assign(TEMP[0].xyz, "position");</code>
 		 * @param	field	A register, component or component selection.  Sampler registers may not be assigned aliases.
 		 * @param	alias	A unique string identifier.
 		 * @return	Returns the value passed into the field parameter, allowing alias and variable assignment in a single statement syntax -- See example usage above.
+		 * @see #unassign()
 		 */
-		public function assign(field:IField, alias:String):* {
-			return RegisterData.assign(field, alias);
+		protected function assign(field:IIField, alias:String):* {
+			if (!debug) return field;
+			if (!Assembler.isPreparing) throw new Error("Aliases can only be assigned within the scope of _fragmentShader() or _vertexShader().");
+			//if (registerData == null) registerData = new RegisterData();
+			return registerData.assign(field, alias);
 		}
 		
+		
 		/**
-		 * Frees a register (or subset of components) for assignment to a different alias.
+		 * <p>Frees a register (or subset of components) for assignment to a different alias.</p>
+		 * <p>Note:  All alias management is disabled when EasyBase::debug is false.  (See EasyAGAL/EasierAGAL constructors)
+		 * 
 		 * <b>Usage:</b>  <code>myAlias = unassign(TEMP[0].xyz);</code></br/>
 		 * <code>myAlias = unassign(myAlias);</code>
 		 * @param	field	A register, component or component selection.
 		 * @return	Always returns null, allowing alias assignment and variable to be cleared in a single statement syntax -- See example usage above.
+		 * @see #assign()
 		 */
-		static public function unassign(field:IField):* {
-			return RegisterData.unassign(field);
+		protected function unassign(field:IIField):* {
+			if (!debug) return field;
+			if (!Assembler.isPreparing) throw new Error("Aliases can only be (un)assigned within the scope of _fragmentShader() or _vertexShader().");
+			//if (registerData == null) registerData = new RegisterData();
+			return registerData.unassign(field);
 		}
+		
+		
+		//-------------------------------------------------------
 		
 		
 		/** The Program3D instance created by calling upload()  */
@@ -299,7 +322,7 @@ package com.barliesque.agal {
 			if (_vertexOpcode == null || _vertexOpcode == "") {
 				_vertexOpcode = "";
 				Assembler.prep(true, assemblyDebug);
-				RegisterData.clear(true);
+				if (debug) registerData.clearTemp();  // Clear temporary register data
 				_vertexShader();
 				_vertexOpcode += Assembler.code;
 				_vertexInstructions = Assembler.instructionCount;
@@ -314,7 +337,7 @@ package com.barliesque.agal {
 			if (_fragmentOpcode == null || _fragmentOpcode == "") {
 				_fragmentOpcode = "";
 				Assembler.prep(false, assemblyDebug);
-				RegisterData.clear(true);
+				if (debug) registerData.clearTemp();  // Clear temporary register data
 				_fragmentShader();
 				_fragmentOpcode += Assembler.code;
 				_fragmentInstructions = Assembler.instructionCount;
@@ -347,7 +370,7 @@ package com.barliesque.agal {
 					trace(getFragmentOpcode(true));
 					trace("\nAGAL ERROR ______________________________");
 				}
-				trace(err);
+				trace(err.getStackTrace());
 			}
 			
 			return _program;
@@ -379,6 +402,8 @@ package com.barliesque.agal {
 			_vertexInstructions = 0;
 			_fragmentOpcode = null;
 			_fragmentInstructions = 0;
+			registerData = null;
+			test = null;
 		}
 		
 		//------------------------------------------------------
@@ -456,6 +481,7 @@ package com.barliesque.agal {
 		 * @return	Returns a CONST register in relative format, e.g. "vc[vt0.x]"
 		 */
 		protected function CONST_byIndex(index:IComponent):IRegister {
+			RegisterData.currentData = registerData;
 			return new Register("CONST", "vc[" + (index as Component).reg + "]", null);
 		}
 		
@@ -469,7 +495,10 @@ package com.barliesque.agal {
 		 * <p>1) Pre-calculate and pass the resulting value in another Constant register.  (Usually preferred)</p>
 		 * <p>2) Move one Constant register's value to a Temp register, and then perform the calculation.</p>
 		 */
-		protected function get CONST():Vector.<IRegister> { return _CONST; }
+		protected function get CONST():Vector.<IRegister> {
+			RegisterData.currentData = registerData;
+			return _CONST;
+		}
 		
 		/**
 		 * <p>{ vt0-7 / ft0-7 }  TEMPORARY REGISTERS</p>
@@ -477,7 +506,10 @@ package com.barliesque.agal {
 		 * and allow you to temporarily store the results of calculations.
 		 * There are 8 temporary registers available to vertex shaders, and another 8 to pixel shaders.</p>
 		 */
-		protected function get TEMP():Vector.<IRegister> { return _TEMP; }
+		protected function get TEMP():Vector.<IRegister> {
+			RegisterData.currentData = registerData;
+			return _TEMP;
+		}
 		
 		/**
 		 * <p>{ va0-7 }  VERTEX ATTRIBUTE BUFFER REGISTERS</p>
@@ -487,7 +519,10 @@ package com.barliesque.agal {
 		 * Attributes of a vertex will probably include position, as well as UV texture values, 
 		 * vertex color, vertex normal, or any other information that your shader can make use of.</p>
 		 */
-		protected function get ATTRIBUTE():Vector.<IRegister> { return _ATTRIBUTE; }
+		protected function get ATTRIBUTE():Vector.<IRegister> {
+			RegisterData.currentData = registerData;
+			return _ATTRIBUTE;
+		}
 		
 		/**
 		 * <p>{ op / oc }  OUTPUT REGISTER - Position or Color</p>
@@ -498,7 +533,10 @@ package com.barliesque.agal {
 		 * The Output register is write-only.</p>
 		 * <p>For more about the clip-space coordinate system, see:  http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter04.html</p>
 		 */
-		protected function get OUTPUT():IRegister { return _OUTPUT; }
+		protected function get OUTPUT():IRegister { 
+			RegisterData.currentData = registerData;
+			return _OUTPUT;
+		}
 		
 		/**
 		 * <p>{ v0-7 }  VARYING REGISTERS</p>
@@ -508,7 +546,10 @@ package com.barliesque.agal {
 		 * of which the fragment is a part.
 		 * There are 8 Varying registers, shared by both vector and fragment shaders.</p>
 		 */
-		protected function get VARYING():Vector.<IRegister> { return _VARYING; }
+		protected function get VARYING():Vector.<IRegister> { 
+			RegisterData.currentData = registerData;
+			return _VARYING;
+		}
 		
 		/**
 		 * <p>{ fs0-7 }  FRAGMENT (TEXTURE) SAMPLER REGISTERS</p>
@@ -517,7 +558,10 @@ package com.barliesque.agal {
 		 * the function Context3D::setTextureAt(index:uint, texture:BitmapData) where
 		 * the index corresponds to the Fragment Sampler register number.</p>
 		 */
-		protected function get SAMPLER():Vector.<ISampler> { return _SAMPLER; }
+		protected function get SAMPLER():Vector.<ISampler> {
+			RegisterData.currentData = registerData;
+			return _SAMPLER;
+		}
 		
 		//} -----------------------------------------------------------------		
 		

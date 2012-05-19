@@ -8,8 +8,6 @@ package com.barliesque.agal {
 		
 		static private const COMPONENT:Object = { x:1, y:2, z:4, w:8, r:1, g:2, b:4, a:8 };
 		
-		static private var data:Object = { };
-		
 		static private var regName:String;
 		static private var mask:uint;
 		
@@ -17,21 +15,33 @@ package com.barliesque.agal {
 		static public const MODE_VERTEX:int = 1;
 		static public const MODE_FRAGMENT:int = 2;
 		
+		static public var currentData:RegisterData;
+		
+		private var data:Object = { };
+		
+		public function RegisterData() {
+			currentData = this;
+		}
 		
 		/**
-		 * Erases all data associated with registers and components.
-		 * @param	tempOnly	If true, only the temporary registers are cleared.
+		 * Erase all data associated with registers and components.
 		 */
-		static public function clear(tempOnly:Boolean = false):void {
-			if (tempOnly) {
-				for (var reg:String in data) {
-					if (reg.charAt(1) == "t") delete data[reg];
+		public function clear():void {
+			data = { };
+		}
+		
+		/**
+		 * Clear only temporary register data
+		 */
+		public function clearTemp():void {
+			for (var reg:String in data) {
+				if (reg.charAt(1) == "t") {
+					delete data[reg];
 				}
-			} else {
-				data = { };
 			}
 		}
 		
+		//-----------------------------------------------------------------------------
 		
 		/**
 		 * Assigns a register (or subset of its components) to a named alias.  Attempting to assign an alias to a register or component that has already been assigned will cause an error to be thrown bringing the conflict to light.<br/>
@@ -42,21 +52,11 @@ package com.barliesque.agal {
 		 * @param	mode	Allows vertex/fragment shader mode to be specified for assignments outside the shader program functions.
 		 * @return	Returns the value passed into the field parameter, allowing alias and variable assignment in a single statement syntax -- See example usage above.
 		 */
-		static public function assign(field:IField, alias:String, mode:int = MODE_AUTO):* {
-			var origValue:Boolean = Assembler.assemblingVertex;
-			
-			if (mode == MODE_AUTO) {
-				if (!Assembler.isPreparing) {
-					if (!isVarying(field)) throw new Error("When called outside the scope of _vertexShader() or _fragmentShader() only VARYING registers may be assigned.");
-				}
-			} else {
-				Assembler.assemblingVertex = (mode == MODE_VERTEX);
-			}
+		public function assign(field:IIField, alias:String, mode:int = MODE_AUTO):* {
+			validateScope(mode, field);
 			setAlias(field, alias, true);
-			Assembler.assemblingVertex = origValue;
 			return field;
 		}
-		
 		
 		/**
 		 * Frees a register (or subset of components) for assignment to a different alias.
@@ -66,51 +66,58 @@ package com.barliesque.agal {
 		 * @param	mode	Allows vertex/fragment shader mode to be specified for calls made outside the shader program functions.
 		 * @return	Always returns null, allowing alias assignment and variable to be cleared in a single statement syntax -- See example usage above.
 		 */
-		static public function unassign(field:IField, mode:int = MODE_AUTO):* {
-			var origValue:Boolean = Assembler.assemblingVertex;
-			if (mode == MODE_AUTO) {
-				if (!Assembler.isPreparing) {
-					if (!isVarying(field)) throw new Error("When called outside the scope of _vertexShader() or _fragmentShader() only VARYING registers may be (un)assigned.");
-				}
-			} else {
-				Assembler.assemblingVertex = (mode == MODE_VERTEX);
-			}
-			
+		public function unassign(field:IIField, mode:int = MODE_AUTO):* {
+			validateScope(mode, field);
 			setAlias(field, ComponentData.UNASSIGNED, false);
 			return null;
 		}
 		
+		/// Make sure alias (un)assignment is being used correctly, and set Assembler mode if needed
+		private function validateScope(mode:int, field:IIField):void {
+			if (!Assembler.isPreparing) {
+				// OUTSIDE shader preparation scope
+				if (RegisterType.isTemp(field)) {
+					throw new Error("Temporary registers may only be assigned an alias within the scope of _vertexShader() or _fragmentShader()");
+				} else {
+					if (mode == MODE_AUTO) throw new Error("Parameter 'mode' can not be MODE_AUTO outside the scope of _vertexShader() and _fragmentShader()");
+				}
+				Assembler.assemblingVertex = (mode == MODE_VERTEX);
+			} else {
+				// INSIDE shader preparation scope
+				if (mode != MODE_AUTO) throw new Error("Parameter 'mode' must be MODE_AUTO when called within the scope of _vertexShader() and _fragmentShader()");
+			}
+		}
+		
+		//-----------------------------------------------------------------------------
 		
 		/**
 		 * Returns the alias name assigned to a register (or subset of components)
 		 * @param	field	A register, component or component selection.
 		 * @return	Returns the alias assigned to a register (or subset of components)
 		 */
-		static public function getAlias(field:IField):String {
+		public function getAlias(field:IIField):String {
 			parse(field);
 			var regData:ComponentData = data[regName];
+			if (regData == null) return ComponentData.UNASSIGNED;
 			return regData.getAlias(mask);
 		}
 		
-		
 		/**
-		 * 
-		 * @param	field
+		 * Check to see if a register or component has been assigned as alias
+		 * @param	field	A register, component or component selection.
 		 * @return	Returns true if no alias has been assigned to any of the components
 		 */
-		static public function isAssigned(field:IField):Boolean {
+		public function isAssigned(field:IIField):Boolean {
 			parse(field);
 			var regData:ComponentData = data[regName];
 			if (regData == null) return false;
 			return regData.isAssigned(mask);
 		}
 		
-		
-		//-------------------------------------------------------------------
-		
+		//-----------------------------------------------------------------------------
 		
 		/// Set or clear an alias
-		static private function setAlias(field:IField, alias:String, assignedCheck:Boolean):void {
+		private function setAlias(field:IIField, alias:String, assignedCheck:Boolean):void {
 			parse(field);
 			var regData:ComponentData = data[regName];
 			if (regData == null) regData = data[regName] = new ComponentData();
@@ -124,7 +131,7 @@ package com.barliesque.agal {
 		
 		
 		///  Parse register and components being specified.  Result goes into class properties:  regName & mask
-		static private function parse(field:IField):void {
+		private function parse(field:IIField):void {
 			var part:Array;
 			
 			if (field is Register) {
@@ -146,21 +153,6 @@ package com.barliesque.agal {
 			}
 		}
 		
-		///  Returns true only if the specified parameter is a VARYING register (or selection)
-		static private function isVarying(field:IField):Boolean {
-			var name:String;
-			if (field is Register) {
-				name = (field as Register).reg;
-			} else if (field is Component) {
-				name = (field as Component).reg;
-			} else {
-				name = (field as ComponentSelection).reg;
-			}
-			if (name.charAt(0) != "v") return false;
-			if (name.charCodeAt(1) < String("0").charCodeAt(0)) return false;
-			if (name.charCodeAt(1) > String("9").charCodeAt(0)) return false;
-			return true;
-		}
 		
 		
 	}

@@ -19,7 +19,14 @@ package com.barliesque.agal {
 		}
 		
 		public function toString():String {
-			return '[Register name="' + reg + '" alias="' + RegisterData.currentData.getAlias(this) + '"]';
+			if (!Assembler.isPreparing) return '[Register]';
+			if (RegisterData.currentData == null) return '[Register name="' + reg + '"]';
+			return '[Register name="' + reg + '" alias="' + alias + '"]';
+		}
+		
+		public function get alias():String {
+			if (RegisterData.currentData == null) return null;
+			return RegisterData.currentData.getAlias(this);
 		}
 		
 		internal function get reg():String { 

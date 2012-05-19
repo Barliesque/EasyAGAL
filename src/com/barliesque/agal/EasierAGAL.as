@@ -1,28 +1,28 @@
 package com.barliesque.agal {
 	
 	/**
-	* An easier-reading and easier-writing alternative to bare naked AGAL.
-	* Extend this class, or EasyAGAL, to write new shader programs.
-	* This variation on EasyAGAL uses full-word method names for improved readability.
-	* Documentation throughout this class includes for each instruction
-	* the three-letter AGAL opcode, in square brackets.
-	* 
-	* @author David Barlia, david@barliesque.com
-	* 
-	* This project is licensed under the Apache Open Source License, ver.2
-	* http://www.apache.org/licenses/LICENSE-2.0.html
-	* 
-	* Basically, it's yours to code with for all your Molehill needs, on projects
-	* personal or commercial, so long as the source itself is not sold as your own work.
-	* If you're overcome with a need to give me credit, I will not be offended, but
-	* no such act is required.  If you come up with improvements, I ask that you 
-	* drop me an update.  In any case, this header should stay where it is, 
-	* unalterred, wherever you may wish to spread it.
-	*/
+	 * An easier-reading and easier-writing alternative to bare naked AGAL.
+	 * Extend this class, or EasyAGAL, to write new shader programs.
+	 * This variation on EasyAGAL uses full-word method names for improved readability.
+	 * Documentation throughout this class includes for each instruction
+	 * the three-letter AGAL opcode, in square brackets.
+	 * 
+	 * @author David Barlia, david@barliesque.com
+	 * 
+	 * This project is licensed under the Apache Open Source License, ver.2
+	 * http://www.apache.org/licenses/LICENSE-2.0.html
+	 * 
+	 * Basically, it's yours to code with for all your Molehill needs, on projects
+	 * personal or commercial, so long as the source itself is not sold as your own work.
+	 * If you're overcome with a need to give me credit, I will not be offended, but
+	 * no such act is required.  If you come up with improvements, I ask that you 
+	 * drop me an update.  In any case, this header should stay where it is, 
+	 * unalterred, wherever you may wish to distribute this library.
+	 */
 	public class EasierAGAL extends EasyBase {
 		
 		/**
-		 * @param	debug				Set to true to enable comments to be added to opcode, and opcode trace upon rejection of program upload.
+		 * @param	debug				Set to true to enable basic debugging features:  alias management, comments added to opcode, opcode trace upon rejection of program upload.
 		 * @param	assemblyDebug		Set to true for opcode output from AGALMiniAssembler
 		 */
 		public function EasierAGAL(debug:Boolean = true, assemblyDebug:Boolean = false) {

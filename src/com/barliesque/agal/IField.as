@@ -7,7 +7,7 @@ package com.barliesque.agal {
 	 * 
 	 * @author David Barlia
 	 */
-	public interface IField { 
+	public interface IField extends IIField { 
 		function toString():String;
 	}
 	
