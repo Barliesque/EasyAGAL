@@ -2,7 +2,8 @@
 EasyAGAL
 by David Barlia,  david@barliesque.com
 ---------------------------------
-http://github.com/Barliesque/EasyAGAL
+Download:    http://github.com/Barliesque/EasyAGAL
+Online documentation:    http://barliesque.com/easy_agal/docs/
 
 EasyAGAL is an open source ActionScript library that assists developers in writing 
 AGAL ("Adobe Graphics Assembly Language") by providing an AS3-based 
@@ -21,11 +22,13 @@ register as you type, including the original AGAL opcodes.
 
 
 
+CHANGE LOG _________________________________________________________________________________________
 
-CHANGE LOG __________________________________________________________________________________________________________
-
+18.May.2012
+- Fixed atan() formula which was incorrect for input values less than 0
 - New alias management functions!   assign()  & unassign()
 - Added .xy as a standard component selection
+- Removed unsupported flags from TextureFlag.as
 
 25.Feb.2012
 - New example:  a shader that renders lighting
