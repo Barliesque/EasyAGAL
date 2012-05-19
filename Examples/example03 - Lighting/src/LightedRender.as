@@ -28,10 +28,10 @@ package {
 		private var texture3D:Texture;
 		
 		// Aliases for the varying registers to be used to connect the vertex and fragment shaders
-		private var vertexUV:IRegister		 = assign(VARYING[0], "vertexUV");
-		private var vertexNormal:IRegister   = assign(VARYING[1], "vertexNormal");
-		private var vertexPos:IRegister      = assign(VARYING[2], "vertexPos");
-		private var lightPos:IRegister       = assign(VARYING[3], "lightPos");
+		private var vertexUV:IRegister;
+		private var vertexNormal:IRegister;
+		private var vertexPos:IRegister;
+		private var lightPos:IRegister;  
 		
 		
 		/// x,y,z, nx,ny,nz, u,v
@@ -45,10 +45,10 @@ package {
 		
 		
 		override protected function _vertexShader():void {
-			//vertexUV = assign(VARYING[0], "vertexUV");
-			//vertexNormal = assign(VARYING[1], "vertexNormal");
-			//vertexPos = assign(VARYING[2], "vertexPos");
-			//lightPos = assign(VARYING[3], "lightPos");
+			vertexUV = assign(VARYING[0], "vertexUV");
+			vertexNormal = assign(VARYING[1], "vertexNormal");
+			vertexPos = assign(VARYING[2], "vertexPos");
+			lightPos = assign(VARYING[3], "lightPos");
 			
 			var viewMatrix:IRegister = assign(CONST[0], "viewMatrix");
 			
@@ -113,9 +113,9 @@ package {
 			
 			// Finally, blend with the texture sample and output (Try using any of the following blends)
 			Blend.hardLight(finalColor, textureRGB, finalLight, one, half, TEMP[1], TEMP[2], TEMP[3]);
-			//Blend.glow(finalColor, finalLight, textureRGB, one, TEMP[1]);
 			//Blend.softLight(finalColor, finalLight, textureRGB);
 			//Blend.pinLight(finalColor, textureRGB, finalLight, one, half, TEMP[1], TEMP[2], TEMP[3]);
+			//Blend.glow(finalColor, finalLight, textureRGB, one, TEMP[1]);
 			//Blend.grainMerge(finalColor, textureRGB, finalLight, half);
 			//Blend.linearLight(finalColor, textureRGB, finalLight, one);
 			move(OUTPUT, finalColor.rgb);
