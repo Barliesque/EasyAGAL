@@ -28,15 +28,16 @@ package com.barliesque.shaders.macro {
 		
 		/**
 		 * atan:  Find the inverse (or arc-) tangent of a specified tangent
-		 * [3 Operations]
+		 * [4 Operations]
 		 * @param	dest	Destination of the resulting value in radians
 		 * @param	source	A component containing the input tanget value
 		 * @param	one		A component containing the constant value:  1.0
 		 * @param	halfPi	A component containing the constant value:  (Math.PI / 2.0)
 		 */
 		static public function atan(dest:IField, source:IField, one:IComponent, halfPi:IComponent):void {
-			// atan(x) = (Pi / 2) * x / (1 + x)
-			add(dest, source, one);
+			// atan(x) = (Pi / 2) * x / (1 + abs(x))
+			abs(dest, source);
+			add(dest, dest, one);
 			divide(dest, source, dest);
 			multiply(dest, dest, halfPi);
 		}
