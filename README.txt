@@ -24,6 +24,11 @@ register as you type, including the original AGAL opcodes.
 
 CHANGE LOG _________________________________________________________________________________________
 
+4.June.2012
+- Updated AGALMiniAssembler.as
+- Removed macro placeholders for seq & sne which are now supported
+- Updated swc & docs
+
 18.May.2012
 - Fixed atan() formula which was incorrect for input values less than 0
 - New alias management functions!   assign()  & unassign()
