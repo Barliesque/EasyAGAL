@@ -270,43 +270,59 @@ package com.barliesque.agal {
 			Assembler.append("slt " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
+		/*
+		 * <p>Sign (Component-wise)</p>
+		 * <p>Extracts the sign of the source value, and sets the destination to:  
+		 * -1 if source is less than zero; 0 if source equals zero; or 1 if source is greater than zero.</p>
+		 * @param	dest		The destination register or component selection
+		 * @param	source		The source register or component selection
+		 */
+		/*
+		static protected function sgn(dest:IField, source:IField):void {
+			Assembler.append("sgn " + dest["reg"] + ", " + source["reg"]);
+		}
+		*/
 		
 		/**
 		 * <p>Set If Equal</p>
-		 * <p>This is a 3-instruction macro substitute for the currently unsupported [seq] opcode.</p>
 		 * <p>Each component is compared individually.  If source1 is equal to
 		 * source2, the corresponding component of the destination will be set to 1;
 		 * otherwise, it will be set to 0.</p>
 		 * @param	dest		Register in which the result of this operation will be stored
 		 * @param	source1		Value on the left side of the comparison
 		 * @param	source2		Value on the right side of the comparison
-		 * @param	temp		A temporary register which will be utilized for this comparison
 		 */
-		static protected function seq(dest:IField, source1:IField, source2:IField, temp:IRegister):void {
-			//Assembler.append("seq " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		static protected function seq(dest:IField, source1:IField, source2:IField):void { //, temp:IRegister):void {
+			Assembler.append("seq " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 			
+			/*
+			* @param	temp		A temporary register which will be utilized for this comparison
+			* <p>This is a 3-instruction macro substitute for the currently unsupported [seq] opcode.</p>
 			sge(dest, source1, source2);	//  Is source1 >= source2?
 			sge(temp, source2, source1);	//  Is source2 >= source1?
 			min(dest, dest, temp);			//  If both of the above are true, then they must be equal
+			*/
 		}
 		
 		/**
 		 * <p>Set If Not Equal</p>
-		 * <p>This is a 3-instruction macro substitute for the currently unsupported [sne] opcode.</p>
 		 * <p>Each component is compared individually.  If source1 is not equal to
 		 * source2, the corresponding component of the destination will be set to 1;
 		 * otherwise, it will be set to 0.</p>
 		 * @param	dest		Register in which the result of this operation will be stored
 		 * @param	source1		Value on the left side of the comparison
 		 * @param	source2		Value on the right side of the comparison
-		 * @param	temp		A temporary register which will be utilized for this comparison
 		 */
-		static protected function sne(dest:IField, source1:IField, source2:IField, temp:IRegister):void {
-			//Assembler.append("sne " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		static protected function sne(dest:IField, source1:IField, source2:IField):void { //, temp:IRegister):void {
+			Assembler.append("sne " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 			
+			/*
+			* <p>This is a 3-instruction macro substitute for the currently unsupported [sne] opcode.</p>
+			* @param	temp		A temporary register which will be utilized for this comparison
 			slt(dest, source1, source2);	//  Is source1 < source2?
 			slt(temp, source2, source1);	//  Is source2 < source1?
 			max(dest, dest, temp);			//  If either of the above are true, then they must not be equal
+			*/
 		}
 		
 		

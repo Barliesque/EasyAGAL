@@ -23,7 +23,7 @@ package com.barliesque.shaders.macro {
 		/**
 		 * Return one of two results, based on a comparison of two values, componentwise
 		 * dest = (operandA compared with operandB) ? trueResult : falseResult
-		 * Contains 5 to 8 instructions.
+		 * Contains 5 instructions.
 		 * @param	comparison	The type of comparison, e.g. Utils.NOT_EQUAL
 		 * @param	temp		A temporary register that will be utilized for this operation
 		 */
@@ -43,17 +43,13 @@ package com.barliesque.shaders.macro {
 					break;
 					
 				case EQUAL:
-					setIf_Equal(dest, operandA, operandB, temp);
-					//  temp = 1 - dest
-					setIf_GreaterEqual(temp, operandA, operandA);
-					subtract(temp, temp, dest);
+					setIf_Equal(dest, operandA, operandB);
+					setIf_NotEqual(temp, operandA, operandB);
 					break;
 					
 				case NOT_EQUAL:
-					setIf_NotEqual(dest, operandA, operandB, temp);
-					//  temp = 1 - dest
-					setIf_GreaterEqual(temp, operandA, operandA);
-					subtract(temp, temp, dest);
+					setIf_NotEqual(dest, operandA, operandB);
+					setIf_Equal(temp, operandA, operandB);
 					break;
 					
 				case LESS_THAN:
@@ -103,7 +99,7 @@ package com.barliesque.shaders.macro {
 			move(currentIndex, dest);
 			
 			for (var i:int = 0; i < options.length; i++ ) {
-				setIf_Equal(compare, currentIndex, selected, temp2);
+				setIf_Equal(compare, currentIndex, selected);
 				multiply(temp2, options[i], compare);
 				add(dest, dest, temp2);
 				

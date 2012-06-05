@@ -13,7 +13,7 @@ package com.barliesque.shaders.macro {
 		
 		/**
 		 * Convert an RGB color value to HSL (Hue, Saturation, Luminance) color space.
-		 * [49 operations]
+		 * [41 operations]
 		 * @param	dest	Register to store resulting HSL color value
 		 * @param	source	Register containing an RGB color value
 		 * @param	zero	A component containing the value:  0.0
@@ -59,12 +59,12 @@ package com.barliesque.shaders.macro {
 			Utils.setByComparison(sat, lum, Utils.LESS_THAN, half, temp.x, temp.y, temp2);
 			
 			// Set the HUE
-			setIf_Equal(temp.rgb, source.rgb, maxRGB, temp2);
-			setIf_NotEqual(temp.w, temp.x, temp.y, temp2);
+			setIf_Equal(temp.rgb, source.rgb, maxRGB);
+			setIf_NotEqual(temp.w, temp.x, temp.y);
 			min(temp.y, temp.y, temp.w);  // G can only be true if R is not also true
-			setIf_NotEqual(temp.w, temp.x, temp.z, temp2);
+			setIf_NotEqual(temp.w, temp.x, temp.z);
 			min(temp.z, temp.z, temp.w);  // B can only be true if R is not also true
-			setIf_NotEqual(temp.w, temp.y, temp.z, temp2);
+			setIf_NotEqual(temp.w, temp.y, temp.z);
 			min(temp.z, temp.z, temp.w);  // B can only be true if G is not also true
 			
 			// if (r is max) hue = (((g - b) / delta)) / 6.0
