@@ -20,9 +20,13 @@ package com.barliesque.shaders.macro {
 		 * @param	temp		A temporary register to be used for this calculation
 		 */
 		static public function tan(dest:IField, source:IField, temp:IRegister):void {
+			comment(dest.code + " = tan(" + source.code + ")");
+			
 			sin(dest, source);
 			cos(temp, source);
 			divide(dest, dest, temp);
+			
+			comment();
 		}
 		
 		
@@ -35,63 +39,63 @@ package com.barliesque.shaders.macro {
 		 * @param	halfPi	A component containing the constant value:  (Math.PI / 2.0)
 		 */
 		static public function atan(dest:IField, source:IField, one:IComponent, halfPi:IComponent):void {
+			comment(dest.code + " = atan(" + source.code + ")");
+			
 			// atan(x) = (Pi / 2) * x / (1 + abs(x))
 			abs(dest, source);
 			add(dest, dest, one);
 			divide(dest, source, dest);
 			multiply(dest, dest, halfPi);
+			
+			comment();
 		}
 		
 		
 		/**
 		 * atan2:  Find the inverse (or arc-) tangent of a specified vector
-		 * [16 Operations]
-		 * @param	dest	Destination of the resulting value in radians
-		 * @param	vecX	The X component of the input vector
-		 * @param	vecY	The Y component of the input vector
-		 * @param	zero	A component containing the constant value:  0.0
-		 * @param	one		A component containing the constant value:  1.0
-		 * @param	halfPi	A component containing the constant value:  (Math.PI / 2.0)
-		 * @param	pi		A component containing the constant value:  Math.PI
-		 * @param	temp1	A temporary register to be used for this calculation
-		 * @param	temp2	A temporary register to be used for this calculation
+		 * [22 Operations]
+		 * @param	dest			Destination of the resulting value in radians
+		 * @param	vecY			The Y component of the input vector
+		 * @param	vecX			The X component of the input vector
+		 * @param	temp1			A temporary register to be used for this calculation
+		 * @param	temp2			A temporary register to be used for this calculation
+		 * @param	quarterPi		A component containing the constant value:  (Math.PI / 4.0)
+		 * @param	sixteenthPi		(Optional) If higher precision is needed, include a component containing the constant value:  (Math.PI / 16.0)
+		 * @param	tiny			A component containing the constant value:  Number.MIN_VALUE
 		 */
-		static public function atan2(dest:IField, vecX:IComponent, vecY:IComponent, 
-									zero:IComponent, one:IComponent, halfPi:IComponent, pi:IComponent, 
-									temp1:IRegister, temp2:IRegister):void {
+		static public function atan2(dest:IField, vecY:IComponent, vecX:IComponent, 
+										temp1:IRegister, temp2:IRegister,
+										quarterPi:IComponent,  sixteenthPi:IComponent, tiny:IComponent):void {
 			
-			comment("atan2()");
-			divide(temp1.x, vecY, vecX);	// temp1.x = vecY / vecX
-			negate(temp1.y, temp1.x);		// temp1.y = -(vecY / vecX)
+			comment(dest.code + " = atan2(" + vecY.code + ", " + vecX.code + ")");
 			
-			// temp2.x = atan(x) = (Pi / 2) * x / (1 + x)
-			// temp2.y = atan(y) = (Pi / 2) * y / (1 + y)
-			add(temp2._("xy"), temp1._("xy"), one);
-			divide(temp2._("xy"), temp1._("xy"), temp2._("xy"));
-			multiply(temp2._("xy"), temp2._("xy"), halfPi);
+			move(temp2, vecY);								// [y, y, y, y]
+			move(temp2.y, vecX);							// [y, x, y, y]
+			subtract(temp2.zw, temp2.zw, temp2.x);			// [y, x, 0, 0]
+			setIf_GreaterEqual(temp2, temp2, temp2.z);		// temp2 = { x: (vecY >= 0), y: (vecX >= 0), z: 1, w: 1 }
 			
-			// Temp1 = Which quadrant?
-			setIf_GreaterEqual(temp1.x, vecX, zero);		// temp1.x = vecX >= 0
-			setIf_GreaterEqual(temp1.y, vecY, zero); 		// temp1.y = vecY >= 0
-			subtract(temp1._("zw"), one, temp1._("xy"));	// temp1.z = vecX < 0
-															// temp1.w = vecY < 0
-			// temp1.x = vecX <  0 && vecY <  0
-			// temp1.y = vecX >= 0 && vecY <  0
-			// temp1.z = vecX >= 0 && vecY >= 0
-			// temp1.w = vecX <  0 && vecY >= 0
-			multiply(temp1._("xyzw"), temp1._("zxxz"), temp1._("wwyy"));
+			add( temp2._("xyw"), temp2._("xyw"), temp2._("xyw"));
+			subtract(temp2.xy, temp2.xy, temp2._("zz"));	// temp2 = [sgn(y), sgn(x), 1, 2]
+			subtract(temp2.w, temp2.w, 	temp2.x);			// temp2.w = 2 - sgn(y)
 			
-			// Temp2 = angle results for each of the four quadrants
-			move(temp2.z, temp2.x);				// temp2.z = temp2.x
-			subtract(temp2.w, pi, temp2.y);		// temp2.w = Pi - temp2.y
-			subtract(temp2.x, temp2.x, pi);		// temp2.x = temp2.x - Pi
-			negate(temp2.y, temp2.y);			// temp2.y = -temp2.y
+			multiply(temp2.w, temp2.w, quarterPi);			// temp2.w = (2 - sgn(y)) * pi/4
+			multiply(temp2.z, temp2.y, vecX);				// temp2.z = y * sign
+			add(temp2.z, temp2.z, tiny);					// temp2.z = y * sign + insignificant value (to avoid divide by zero)
 			
-			// Multiply quadrant booleans with quadrant angles
-			multiply(temp1, temp1, temp2);
-			// All but one product will be zero - Add them all together for final answer
-			add(temp1._("xy"), temp1._("xy"), temp1._("zy"));
-			add(dest, temp1.x, temp1.y);
+			multiply(temp1.w, temp2.x, temp2.z);			// signY * r
+			subtract(temp1.w, vecY, temp1.w);				// (x - signY * r)
+			multiply(temp1.y, temp2.x, vecY);				// signY * x
+			add(temp1.y, temp1.y, temp2.z);					// (signY * x + r)
+			divide(temp2.z, temp1.w, temp1.y);				// r = (y - signY * r) / (signY * y + r)
+			
+			multiply(dest, temp2.z, temp2.z);				// dest = r * r  
+			multiply(dest, dest, sixteenthPi);				// dest = pi/16 * r * r  
+			subtract(dest, dest, quarterPi);				// dest = (pi/16 * r * r - pi/4)  
+			subtract(dest, dest, sixteenthPi);				// dest = (pi/16 * r * r - pi/4)  
+			multiply(dest, dest, temp2.z);					// dest = (pi/16 * r * r - pi/4) * r  
+			
+			add(dest, dest, temp2.w);						// dest = (2 - sgn(y)) * pi/4 * pi/4 + (pi/16 * r * r - pi/4) * r  
+			multiply(dest, dest, temp2.y);					// dest = ((2 - sgn(y)) * pi/4 * pi/4 + (pi/16 * r * r - pi/4) * r) * sgn(x)
 			
 			comment();
 		}
@@ -106,12 +110,16 @@ package com.barliesque.shaders.macro {
 		 * @param	euler		A component containing the constant value:  Math.E  (Euler's constant, or 2.71828182845904523536)
 		 */
 		static public function tanh(dest:IField, source:IField, one:IComponent, euler:IComponent, temp:IRegister):void {
+			comment(dest.code + " = tanh(" + source.code + ")");
+			
 			// tanh(x) = (pow(E, 2*x) - 1) / (pow(E, 2*x) + 1)
 			add(temp, source, source);
 			pow(temp, euler, temp);
 			subtract(dest, temp, one);
 			add(temp, temp, one);
 			divide(dest, dest, temp);
+			
+			comment();
 		}
 		
 		
@@ -125,12 +133,16 @@ package com.barliesque.shaders.macro {
 		 * @param	temp		A temporary register to be used for this calculation
 		 */
 		static public function atanh(dest:IField, source:IField, one:IComponent, half:IComponent, temp:IRegister):void {
+			comment(dest.code + " = atanh(" + source.code + ")");
+			
 			//  atanh(x) = 0.5 * log((1.0 + x) / (1.0 - x))
 			add(temp, source, one);
 			subtract(dest, source, one);
 			divide(dest, temp, dest);
 			log(dest, dest);
 			multiply(dest, dest, half);
+			
+			comment();
 		}
 		
 		
@@ -147,6 +159,8 @@ package com.barliesque.shaders.macro {
 		 * @param	halfPi		A component containing the constant value:  (Math.PI / 2.0)
 		 */
 		static public function acos(dest:IField, source:IField, piDiv4p5:IComponent, piDiv3p6:IComponent, halfPi:IComponent):void {
+			comment(dest.code + " = acos(" + source.code + ")");
+			
 			// acos(x) = (-(PI/4.5) * x * x - (PI/3.6)) * x + (PI/2)
 			multiply(dest, piDiv4p5, source);
 			multiply(dest, dest, source);
@@ -154,6 +168,8 @@ package com.barliesque.shaders.macro {
 			subtract(dest, dest, piDiv3p6);
 			multiply(dest, dest, source);
 			add(dest, dest, halfPi);
+			
+			comment();
 		}
 		
 		
@@ -167,12 +183,16 @@ package com.barliesque.shaders.macro {
 		 * @param	temp	A temporary register to be used for this calculation
 		 */
 		static public function cosh(dest:IField, source:IField, half:IComponent, euler:IComponent, temp:IRegister):void {
+			comment(dest.code + " = cosh(" + source.code + ")");
+			
 			// cosh(x) = (pow(E, x) + pow(E, -x)) * 0.5
 			negate(temp, source);
 			pow(temp, euler, temp);
 			pow(dest, euler, source);
 			add(dest, dest, temp);
 			multiply(dest, dest, half);
+			
+			comment();
 		}
 		
 		
@@ -184,11 +204,15 @@ package com.barliesque.shaders.macro {
 		 * @param	one			A component containing the constant value:  1.0
 		 */
 		static public function acosh(dest:IField, source:IField, one:IComponent):void {
+			comment(dest.code + " = acosh(" + source.code + ")");
+			
 			// acosh(x) = log(x + sqrt(x*x - 1))
 			multiply(dest, source, source);
 			subtract(dest, dest, one);
 			squareRoot(dest, dest);
 			log(dest, dest);
+			
+			comment();
 		}
 		
 		
@@ -204,11 +228,15 @@ package com.barliesque.shaders.macro {
 		 * @param	piDiv3p6	A component containing the constant value:  (Math.PI / 3.6)
 		 */
 		static public function asin(dest:IField, source:IField, piDiv4p5:IComponent, piDiv3p6:IComponent):void {
+			comment(dest.code + " = asin(" + source.code + ")");
+			
 			// asin(x) = ((PI/4.5) * a * a + (PI/3.6)) * a
 			multiply(dest, piDiv4p5, source);
 			multiply(dest, dest, source);
 			add(dest, dest, piDiv3p6);
 			multiply(dest, dest, source);
+			
+			comment();
 		}
 		
 		
@@ -221,12 +249,16 @@ package com.barliesque.shaders.macro {
 		 * @param	euler		A component containing the constant value:  Math.E  (Euler's constant, or 2.71828182845904523536)
 		 */
 		static public function sinh(dest:IField, source:IField, half:IComponent, euler:IComponent, temp:IRegister):void {
+			comment(dest.code + " = sinh(" + source.code + ")");
+			
 			// sinh(x) = (pow(E, x) - pow(E, -x)) * 0.5;
 			negate(temp, source);
 			pow(temp, euler, temp);
 			pow(dest, euler, source);
 			subtract(dest, dest, temp);
 			multiply(dest, dest, half);
+			
+			comment();
 		}
 		
 		
@@ -238,12 +270,16 @@ package com.barliesque.shaders.macro {
 		 * @param	one			A component containing the constant value:  1.0
 		 */
 		static public function asinh(dest:IField, source:IField, one:IComponent):void {
+			comment(dest.code + " = asinh(" + source.code + ")");
+			
 			// asinh(x) = log(x + sqrt(x * x + 1.0));
 			multiply(dest, source, source);
 			add(dest, dest, one);
 			squareRoot(dest, dest);
 			add(dest, dest, source);
 			log(dest, dest);
+			
+			comment();
 		}
 		
 		
@@ -258,9 +294,13 @@ package com.barliesque.shaders.macro {
 		 * @param	temp		A temporary register to be used for this calculation
 		 */
 		static public function cotan(dest:IField, source:IField, temp:IRegister):void {
+			comment(dest.code + " = cotan(" + source.code + ")");
+			
 			cos(dest, source);
 			sin(temp, source);
 			divide(dest, dest, temp);
+			
+			comment();
 		}
 		
 		
@@ -271,8 +311,12 @@ package com.barliesque.shaders.macro {
 		 * @param	source		An angle in radians
 		 */
 		static public function secant(dest:IField, source:IField):void {
+			comment(dest.code + " = secant(" + source.code + ")");
+			
 			cos(dest, source);
 			reciprocal(dest, dest);
+			
+			comment();
 		}
 		
 		
@@ -283,8 +327,12 @@ package com.barliesque.shaders.macro {
 		 * @param	source		An angle in radians
 		 */
 		static public function cosecant(dest:IField, source:IField):void {
+			comment(dest.code + " = cosecant(" + source.code + ")");
+			
 			sin(dest, source);
 			reciprocal(dest, dest);
+			
+			comment();
 		}
 		
 		
