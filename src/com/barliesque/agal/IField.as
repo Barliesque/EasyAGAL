@@ -8,7 +8,15 @@ package com.barliesque.agal {
 	 * @author David Barlia
 	 */
 	public interface IField extends IIField { 
+		
+		/** @return Returns a string representation of the register or component selection. */
 		function toString():String;
+		
+		/** The agal code representation of this register or component selection. (Read-only) */
+		function get code():String;
+		
+		/** A name used to reserve this register or component selection. (Read-only) */
+		function get alias():String;
 	}
 	
 }

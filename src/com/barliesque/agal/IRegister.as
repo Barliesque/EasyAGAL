@@ -66,6 +66,11 @@ package com.barliesque.agal {
 		function get xy():ComponentSelection;
 		
 		/**
+		 * A component selection of the last two components, for 2D coordinates such as texture UV.
+		 */
+		function get zw():ComponentSelection;
+		
+		/**
 		 * A component selection of the first three components, in positional/vector notation.
 		 */
 		function get xyz():ComponentSelection;

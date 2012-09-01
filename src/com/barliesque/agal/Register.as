@@ -8,11 +8,11 @@ package com.barliesque.agal {
 			
 		private var _vertexReg:String;
 		private var _fragmentReg:String;
-		private var _name:String;
+		private var _type:String;
 		private var _index:int;
 		
 		public function Register(name:String, vertexReg:String, fragmentReg:String, index:int = -1) {
-			_name = name;
+			_type = name;
 			_vertexReg = vertexReg;
 			_fragmentReg = fragmentReg;
 			_index = index;
@@ -21,7 +21,11 @@ package com.barliesque.agal {
 		public function toString():String {
 			if (!Assembler.isPreparing) return '[Register]';
 			if (RegisterData.currentData == null) return '[Register name="' + reg + '"]';
-			return '[Register name="' + reg + '" alias="' + alias + '"]';
+			return '[Register code="' + reg + '" alias="' + alias + '"]';
+		}
+		
+		public function get code():String {
+			return reg;
 		}
 		
 		public function get alias():String {
@@ -32,13 +36,13 @@ package com.barliesque.agal {
 		internal function get reg():String { 
 			var code:String = (Assembler.assemblingVertex ? _vertexReg : _fragmentReg) + ((_index >= 0) ? _index : "");
 			if (code == null) {
-				throw new Error(_name + " register not available in " + (Assembler.assemblingVertex ? "Vertex Shaders" : "Fragment Shaders"));
+				throw new Error(_type + " register not available in " + (Assembler.assemblingVertex ? "Vertex Shaders" : "Fragment Shaders"));
 			}
 			return code;
 		}
 		
-		internal function get type():String { return _name; }
-		internal function get name():String { return _name; }
+		internal function get type():String { return _type; }
+		//internal function get name():String { return _type; }
 		internal function get vertexReg():String { return _vertexReg; }
 		internal function get fragmentReg():String { return _fragmentReg; }
 		internal function get index():int { return _index; }
@@ -54,6 +58,7 @@ package com.barliesque.agal {
 		public function get a():Component { return new Component(this, "a"); }
 		
 		public function get xy():ComponentSelection { return new ComponentSelection(this, "xy"); }
+		public function get zw():ComponentSelection { return new ComponentSelection(this, "zw"); }
 		
 		public function get xyz():ComponentSelection { return new ComponentSelection(this, "xyz"); }
 		public function get rgb():ComponentSelection { return new ComponentSelection(this, "rgb"); }

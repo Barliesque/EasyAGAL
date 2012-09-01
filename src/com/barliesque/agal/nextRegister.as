@@ -12,7 +12,7 @@ package com.barliesque.agal {
 			/// Get the register with the index following the register specified.
 			public function nextRegister(register:IRegister):IRegister {
 					var reg:Register = register as Register;
-					return new Register(reg.name, reg.vertexReg, reg.fragmentReg, reg.index + 1);
+					return new Register(reg.type, reg.vertexReg, reg.fragmentReg, reg.index + 1);
 			}
 			
 	//}

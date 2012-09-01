@@ -23,7 +23,11 @@ package com.barliesque.agal {
 		public function toString():String {
 			if (!Assembler.isPreparing) return '[ComponentSelection]';
 			if (RegisterData.currentData == null) return '[ComponentSelection name="' + _register + '"]';
-			return '[ComponentSelection name="' + _register + '" alias="' + alias + '"]';
+			return '[ComponentSelection code="' + _register + '" alias="' + alias + '"]';
+		}
+		
+		public function get code():String {
+			return _register;
 		}
 		
 		public function get alias():String {
