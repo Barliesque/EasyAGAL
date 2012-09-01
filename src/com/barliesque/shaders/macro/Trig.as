@@ -60,33 +60,33 @@ package com.barliesque.shaders.macro {
 		 * @param	temp1			A temporary register to be used for this calculation
 		 * @param	temp2			A temporary register to be used for this calculation
 		 * @param	quarterPi		A component containing the constant value:  (Math.PI / 4.0)
-		 * @param	sixteenthPi		(Optional) If higher precision is needed, include a component containing the constant value:  (Math.PI / 16.0)
+		 * @param	sixteenthPi		A component containing the constant value:  (Math.PI / 16.0)
 		 * @param	tiny			A component containing the constant value:  Number.MIN_VALUE
 		 */
 		static public function atan2(dest:IField, vecY:IComponent, vecX:IComponent, 
 										temp1:IRegister, temp2:IRegister,
 										quarterPi:IComponent,  sixteenthPi:IComponent, tiny:IComponent):void {
 			
-			comment(dest.code + " = atan2(" + vecY.code + ", " + vecX.code + ")");
+			comment(dest.code + " = atan2(" + vecX.code + ", " + vecY.code + ")");
 			
-			move(temp2, vecY);								// [y, y, y, y]
-			move(temp2.y, vecX);							// [y, x, y, y]
-			subtract(temp2.zw, temp2.zw, temp2.x);			// [y, x, 0, 0]
-			setIf_GreaterEqual(temp2, temp2, temp2.z);		// temp2 = { x: (vecY >= 0), y: (vecX >= 0), z: 1, w: 1 }
+			move(temp2, vecX);								// [x, x, x, x]
+			move(temp2.y, vecY);							// [x, y, x, x]
+			subtract(temp2.zw, temp2.zw, temp2.x);			// [x, y, 0, 0]
+			setIf_GreaterEqual(temp2, temp2, temp2.z);		// temp2 = { x: (vecX >= 0), y: (vecY >= 0), z: 1, w: 1 }
 			
 			add( temp2._("xyw"), temp2._("xyw"), temp2._("xyw"));
-			subtract(temp2.xy, temp2.xy, temp2._("zz"));	// temp2 = [sgn(y), sgn(x), 1, 2]
-			subtract(temp2.w, temp2.w, 	temp2.x);			// temp2.w = 2 - sgn(y)
+			subtract(temp2.xy, temp2.xy, temp2._("zz"));	// temp2 = [sgn(x), sgn(y), 1, 2]
+			subtract(temp2.w, temp2.w, 	temp2.x);			// temp2.w = 2 - sgn(x)
+			multiply(temp2.w, temp2.w, quarterPi);			// temp2.w = (2 - sgn(x)) * pi/4
 			
-			multiply(temp2.w, temp2.w, quarterPi);			// temp2.w = (2 - sgn(y)) * pi/4
-			multiply(temp2.z, temp2.y, vecX);				// temp2.z = y * sign
-			add(temp2.z, temp2.z, tiny);					// temp2.z = y * sign + insignificant value (to avoid divide by zero)
+			multiply(temp2.z, temp2.y, vecY);				// r = y * signY
+			add(temp2.z, temp2.z, tiny);					// r = y * signY + insignificant value (to avoid divide by zero)
 			
-			multiply(temp1.w, temp2.x, temp2.z);			// signY * r
-			subtract(temp1.w, vecY, temp1.w);				// (x - signY * r)
-			multiply(temp1.y, temp2.x, vecY);				// signY * x
-			add(temp1.y, temp1.y, temp2.z);					// (signY * x + r)
-			divide(temp2.z, temp1.w, temp1.y);				// r = (y - signY * r) / (signY * y + r)
+			multiply(temp1.w, temp2.x, temp2.z);			// t1w = signX * r
+			subtract(temp1.w, vecX, temp1.w);				// t1w = (x - signX * r)
+			multiply(temp1.y, temp2.x, vecX);				// t1y = signX * x
+			add(temp1.y, temp1.y, temp2.z);					// t1y = (signX * x + r)
+			divide(temp2.z, temp1.w, temp1.y);				// r = (x - signX * r) / (signX * x + r)
 			
 			multiply(dest, temp2.z, temp2.z);				// dest = r * r  
 			multiply(dest, dest, sixteenthPi);				// dest = pi/16 * r * r  
@@ -94,8 +94,8 @@ package com.barliesque.shaders.macro {
 			subtract(dest, dest, sixteenthPi);				// dest = (pi/16 * r * r - pi/4)  
 			multiply(dest, dest, temp2.z);					// dest = (pi/16 * r * r - pi/4) * r  
 			
-			add(dest, dest, temp2.w);						// dest = (2 - sgn(y)) * pi/4 * pi/4 + (pi/16 * r * r - pi/4) * r  
-			multiply(dest, dest, temp2.y);					// dest = ((2 - sgn(y)) * pi/4 * pi/4 + (pi/16 * r * r - pi/4) * r) * sgn(x)
+			add(dest, dest, temp2.w);						// dest = (2 - sgn(x)) * pi/4 + (pi/16 * r * r - pi/4) * r  
+			multiply(dest, dest, temp2.y);					// dest = ((2 - sgn(x)) * pi/4 + (pi/16 * r * r - pi/4) * r) * sgn(y)
 			
 			comment();
 		}
