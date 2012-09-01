@@ -24,13 +24,17 @@ register as you type, including the original AGAL opcodes.
 
 CHANGE LOG _________________________________________________________________________________________
 
+31.Aug.2012
+- Rewrote Trig.atan2() which had a bug (thanks @nshen for reporting) 
+- Added public access to property "code" which is useful for comments
+
 4.June.2012
 - Updated AGALMiniAssembler.as
 - Removed macro placeholders for seq & sne which are now supported
 - Updated swc & docs
 
 18.May.2012
-- Fixed atan() formula which was incorrect for input values less than 0
+- Fixed atan() formula which was incorrect for input values less than 0 (thanks @makc for reporting)
 - New alias management functions!   assign()  & unassign()
 - Added .xy as a standard component selection
 - Removed unsupported flags from TextureFlag.as
