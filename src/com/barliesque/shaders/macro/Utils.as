@@ -132,7 +132,7 @@ package com.barliesque.shaders.macro {
 		 */
 		static public function setOne(dest:IField):void {
 			// Is (dest == dest)?  Of course!  So result is always 1.0
-			setIf_GreaterEqual(dest, dest, dest);
+			setIf_Equal(dest, dest, dest);
 		}
 		
 		
