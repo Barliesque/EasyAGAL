@@ -178,6 +178,7 @@ class ComponentData {
 	private var value:Array; // = [UNSET, UNSET, UNSET, UNSET];
 	private var type:Vector.<int>; // = Vector.<int>([0, 0, 0, 0]);
 	
+	public function ComponentData() { }
 	
 	public function isAssigned(mask:uint):Boolean {
 		return 	((mask & 1) && (alias[0] != UNASSIGNED)) ||
