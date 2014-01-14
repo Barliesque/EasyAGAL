@@ -397,12 +397,11 @@ package com.barliesque.agal {
 		}
 		
 		/**
-		 * [kil]  If any component of the source is less than zero, the fragment is discarded and not drawn to the frame buffer.
-		 * @param	dest		The destination register must be all 0. 
-		 * @param	source		A color value.
+		 * [kil]  If the value passed is less than zero, the fragment is discarded and not drawn to the frame buffer.
+		 * @param	source		A single component value
 		 */
-		static protected function killFragment(dest:IField, source:IField):void {
-			Assembler.append("kil " + dest["reg"] + ", " + source["reg"]);
+		static protected function killFragment(source:IComponent):void {
+			Assembler.append("kil " + source["reg"]);
 		}
 		
 		/**

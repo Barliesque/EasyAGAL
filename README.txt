@@ -24,6 +24,9 @@ register as you type, including the original AGAL opcodes.
 
 CHANGE LOG _________________________________________________________________________________________
 
+14.Jan.2014
+- Corrected parameters passed to kil/killFragment() (Thanks b005t3r for reporting)
+
 31.Aug.2012
 - Rewrote Trig.atan2() which had a bug (thanks @nshen for reporting) 
 - Added public access to property "code" which is useful for comments
