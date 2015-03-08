@@ -29,6 +29,8 @@ package com.barliesque.agal {
 		
 		private var registerData:RegisterData;
 		
+		private var assembler:Assembler;
+		
 		static internal var test:ITest;
 		
 		//---------------------------------------------------------
@@ -41,6 +43,7 @@ package com.barliesque.agal {
 			this.debug = debug;
 			this.assemblyDebug = assemblyDebug;
 			if (debug) registerData = new RegisterData();
+			assembler=new Assembler(assemblyDebug);
 		}
 		
 		
@@ -75,7 +78,7 @@ package com.barliesque.agal {
 		 */
 		public function get vertexInstructions():uint {
 			prepVertexShader();
-			if (Assembler.isPreparing && Assembler.assemblingVertex) return Assembler.instructionCount;
+			if (assembler.isPreparing && assembler.assemblingVertex) return assembler.instructionCount;
 			return _vertexInstructions;
 		}
 		
@@ -88,7 +91,7 @@ package com.barliesque.agal {
 		 */
 		public function get fragmentInstructions():uint { 
 			prepFragmentShader();
-			if (Assembler.isPreparing && !Assembler.assemblingVertex) return Assembler.instructionCount;
+			if (assembler.isPreparing && !assembler.assemblingVertex) return assembler.instructionCount;
 			return _fragmentInstructions;
 		}
 		
@@ -104,8 +107,8 @@ package com.barliesque.agal {
 		 */
 		public function getVertexOpcode(lineNumbering:Boolean = false, formatAS3:Boolean = false):String { 
 			prepVertexShader();
-			if (Assembler.isPreparing && Assembler.assemblingVertex) {
-				return ((lineNumbering || formatAS3) ? formatOpcode(Assembler.code, lineNumbering, formatAS3) : Assembler.code);
+			if (assembler.isPreparing && Assembler.assemblingVertex) {
+				return ((lineNumbering || formatAS3) ? formatOpcode(assembler.code, lineNumbering, formatAS3) : assembler.code);
 			}
 			return ((lineNumbering || formatAS3) ? formatOpcode(_vertexOpcode, lineNumbering, formatAS3) : _vertexOpcode);
 		}
@@ -122,8 +125,8 @@ package com.barliesque.agal {
 		 */
 		public function getFragmentOpcode(lineNumbering:Boolean = false, formatAS3:Boolean = false):String {
 			prepFragmentShader();
-			if (Assembler.isPreparing && !Assembler.assemblingVertex) {
-				return ((lineNumbering || formatAS3) ? formatOpcode(Assembler.code, lineNumbering, formatAS3) : Assembler.code);
+			if (assembler.isPreparing && !assembler.assemblingVertex) {
+				return ((lineNumbering || formatAS3) ? formatOpcode(assembler.code, lineNumbering, formatAS3) : assembler.code);
 			}
 			return ((lineNumbering || formatAS3) ? formatOpcode(_fragmentOpcode, lineNumbering, formatAS3) : _fragmentOpcode);
 		}
@@ -146,7 +149,7 @@ package com.barliesque.agal {
 		 */
 		protected function assign(field:IIField, alias:String):* {
 			if (!debug) return field;
-			if (!Assembler.isPreparing) throw new Error("Aliases can only be assigned within the scope of _fragmentShader() or _vertexShader().");
+			if (!assembler.isPreparing) throw new Error("Aliases can only be assigned within the scope of _fragmentShader() or _vertexShader().");
 			//if (registerData == null) registerData = new RegisterData();
 			return registerData.assign(field, alias);
 		}
@@ -164,7 +167,7 @@ package com.barliesque.agal {
 		 */
 		protected function unassign(field:IIField):* {
 			if (!debug) return field;
-			if (!Assembler.isPreparing) throw new Error("Aliases can only be (un)assigned within the scope of _fragmentShader() or _vertexShader().");
+			if (!assembler.isPreparing) throw new Error("Aliases can only be (un)assigned within the scope of _fragmentShader() or _vertexShader().");
 			//if (registerData == null) registerData = new RegisterData();
 			return registerData.unassign(field);
 		}
@@ -223,7 +226,7 @@ package com.barliesque.agal {
 			
 			// Wrap string code into a statement
 			if (formatAS3) {
-				lines.unshift(Assembler.assemblingVertex ? "setVertexOpcode(" : "setFragmentOpcode(");
+				lines.unshift(assembler.assemblingVertex ? "setVertexOpcode(" : "setFragmentOpcode(");
 				lines.push(");");
 			}
 			
@@ -257,14 +260,14 @@ package com.barliesque.agal {
 		 * @see #_vertexShader()
 		 */
 		protected function setVertexOpcode(opcode:String, append:Boolean = false):void {
-			if (Assembler.isPreparing && Assembler.assemblingVertex) {
+			if (assembler.isPreparing && Assembler.assemblingVertex) {
 				if (append) {
-					if (Assembler.code == null) Assembler.code = "";
-					Assembler.code += opcode;
+					if (assembler.code == null) assembler.code = "";
+					assembler.code += opcode;
 				} else {
-					Assembler.code = opcode;
+					assembler.code = opcode;
 				}
-				if (debug) Assembler.instructionCount = countTokenLines(Assembler.code);
+				if (debug) assembler.instructionCount = countTokenLines(assembler.code);
 			} else {
 				if (append) {
 					if (_vertexOpcode == null) _vertexOpcode = "";
@@ -285,14 +288,14 @@ package com.barliesque.agal {
 		 * @see #_fragmentShader()
 		 */
 		protected function setFragmentOpcode(opcode:String, append:Boolean = false):void {
-			if (Assembler.isPreparing && !Assembler.assemblingVertex) {
+			if (assembler.isPreparing && !Assembler.assemblingVertex) {
 				if (append) {
-					if (Assembler.code == null) Assembler.code = "";
-					Assembler.code += opcode;
+					if (assembler.code == null) Assembler.code = "";
+					assembler.code += opcode;
 				} else {
-					Assembler.code = opcode;
+					assembler.code = opcode;
 				}
-				if (debug) Assembler.instructionCount = countTokenLines(Assembler.code);
+				if (debug) assembler.instructionCount = countTokenLines(assembler.code);
 			} else {
 				if (append) {
 					if (_fragmentOpcode == null) _fragmentOpcode = "";
@@ -300,7 +303,7 @@ package com.barliesque.agal {
 				} else {
 					_fragmentOpcode = opcode;
 				}
-				_fragmentInstructions = countTokenLines(Assembler.code);
+				_fragmentInstructions = countTokenLines(assembler.code);
 			}
 		}
 		
@@ -317,32 +320,32 @@ package com.barliesque.agal {
 		
 		/** @private  Prepare AGAL opcode to be passed to AGALMiniAssembler as the vertex program */
 		private function prepVertexShader():void {
-			if (Assembler.isPreparing) return;  // Prevent an inifinte loop if called during prep
-			Assembler.isPreparing = true;
+			if (assembler.isPreparing) return;  // Prevent an inifinte loop if called during prep
+			assembler.isPreparing = true;
 			if (_vertexOpcode == null || _vertexOpcode == "") {
 				_vertexOpcode = "";
-				Assembler.prep(true, assemblyDebug);
+				assembler.prep(true, assemblyDebug);
 				if (debug) registerData.clearTemp();  // Clear temporary register data
 				_vertexShader();
-				_vertexOpcode += Assembler.code;
-				_vertexInstructions = Assembler.instructionCount;
+				_vertexOpcode += assembler.code;
+				_vertexInstructions = assembler.instructionCount;
 			}
-			Assembler.isPreparing = false;
+			assembler.isPreparing = false;
 		}
 		
 		/** @private  Prepare AGAL opcode to be passed to AGALMiniAssembler as the fragment program */
 		private function prepFragmentShader():void {
-			if (Assembler.isPreparing) return;  // Prevent an inifinte loop if called during prep
-			Assembler.isPreparing = true;
+			if (assembler.isPreparing) return;  // Prevent an inifinte loop if called during prep
+			assembler.isPreparing = true;
 			if (_fragmentOpcode == null || _fragmentOpcode == "") {
 				_fragmentOpcode = "";
 				Assembler.prep(false, assemblyDebug);
 				if (debug) registerData.clearTemp();  // Clear temporary register data
 				_fragmentShader();
-				_fragmentOpcode += Assembler.code;
-				_fragmentInstructions = Assembler.instructionCount;
+				_fragmentOpcode += assembler.code;
+				_fragmentInstructions = assembler.instructionCount;
 			}
-			Assembler.isPreparing = false;
+			assembler.isPreparing = false;
 		}
 		
 		//------------------------------------------------------
@@ -380,13 +383,13 @@ package com.barliesque.agal {
 		/** @private */
 		private function assembleVertex():ByteArray {
 			prepVertexShader();
-			return Assembler.assemble(_vertexOpcode);
+			return assembler.assemble(_vertexOpcode);
 		}
 		
 		/** @private */
 		private function assembleFragment():ByteArray {
 			prepFragmentShader();
-			return Assembler.assemble(_fragmentOpcode);
+			return assembler.assemble(_fragmentOpcode);
 		}
 		
 		/**
@@ -416,9 +419,9 @@ package com.barliesque.agal {
 		 */
 		static protected function comment(...remarks):void {
 			// if (EasyBase.debugging) {
-				Assembler.append("\n", false);
+				assembler.append("\n", false);
 				for (var i:int = 0; i < remarks.length; i++) {
-					Assembler.append("// " + remarks[i], false);
+					assembler.append("// " + remarks[i], false);
 				}
 			// }
 		}
