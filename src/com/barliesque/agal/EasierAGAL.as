@@ -35,8 +35,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function move(dest:IField, source:IField):void {
-			Assembler.append("mov " + dest["reg"] + ", " + source["reg"]);
+		public function move(dest:IField, source:IField):void {
+			assembler.append("mov " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -47,8 +47,8 @@ package com.barliesque.agal {
 		 * @param	source1		First source register or component selection
 		 * @param	source2		Second source register or component selection
 		 */
-		static protected function add(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("add " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function add(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("add " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -59,8 +59,8 @@ package com.barliesque.agal {
 		 * @param	source1		First source register or component selection
 		 * @param	source2		Second source register or component selection
 		 */
-		static protected function subtract(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("sub " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function subtract(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("sub " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -71,8 +71,8 @@ package com.barliesque.agal {
 		 * @param	source1		First source register or component selection
 		 * @param	source2		Second source register or component selection
 		 */
-		static protected function multiply(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("mul " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function multiply(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("mul " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -84,8 +84,8 @@ package com.barliesque.agal {
 		 * @param	source1		Source register or component selection of the numerator
 		 * @param	source2		Source register or component selection of the divisor
 		 */
-		static protected function divide(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("div " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function divide(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("div " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -95,8 +95,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function reciprocal(dest:IField, source:IField):void {
-			Assembler.append("rcp " + dest["reg"] + ", " + source["reg"]);
+		public function reciprocal(dest:IField, source:IField):void {
+			assembler.append("rcp " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -108,8 +108,8 @@ package com.barliesque.agal {
 		 * @param	source1		First source register or component selection
 		 * @param	source2		Second source register or component selection
 		 */
-		static protected function min(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("min " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function min(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("min " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -121,8 +121,8 @@ package com.barliesque.agal {
 		 * @param	source1		First source register or component selection
 		 * @param	source2		Second source register or component selection
 		 */
-		static protected function max(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("max " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function max(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("max " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -132,8 +132,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function fractional(dest:IField, source:IField):void {
-			Assembler.append("frc " + dest["reg"] + ", " + source["reg"]);
+		public function fractional(dest:IField, source:IField):void {
+			assembler.append("frc " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -142,8 +142,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function squareRoot(dest:IField, source:IField):void {
-			Assembler.append("sqt " + dest["reg"] + ", " + source["reg"]);
+		public function squareRoot(dest:IField, source:IField):void {
+			assembler.append("sqt " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -153,8 +153,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function reciprocalRoot(dest:IField, source:IField):void {
-			Assembler.append("rsq " + dest["reg"] + ", " + source["reg"]);
+		public function reciprocalRoot(dest:IField, source:IField):void {
+			assembler.append("rsq " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -165,8 +165,8 @@ package com.barliesque.agal {
 		 * @param	source1		First source register or component selection
 		 * @param	source2		Second source register or component selection
 		 */
-		static protected function pow(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("pow " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function pow(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("pow " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -176,8 +176,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function log(dest:IField, source:IField):void {
-			Assembler.append("log " + dest["reg"] + ", " + source["reg"]);
+		public function log(dest:IField, source:IField):void {
+			assembler.append("log " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/** 
@@ -186,8 +186,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function exp(dest:IField, source:IField):void {
-			Assembler.append("exp " + dest["reg"] + ", " + source["reg"]);
+		public function exp(dest:IField, source:IField):void {
+			assembler.append("exp " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -197,8 +197,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination component selection.  Must be 3 components or fewer.
 		 * @param	source		The source register containing a three-component vector.
 		 */
-		static protected function normalize(dest:IField, source:IField):void {
-			Assembler.append("nrm " + dest["reg"] + ", " + source["reg"]);
+		public function normalize(dest:IField, source:IField):void {
+			assembler.append("nrm " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -207,8 +207,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection containing angles in radians.
 		 */
-		static protected function sin(dest:IField, source:IField):void {
-			Assembler.append("sin " + dest["reg"] + ", " + source["reg"]);
+		public function sin(dest:IField, source:IField):void {
+			assembler.append("sin " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/** 
@@ -217,8 +217,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection containing angles in radians.
 		 */
-		static protected function cos(dest:IField, source:IField):void {
-			Assembler.append("cos " + dest["reg"] + ", " + source["reg"]);
+		public function cos(dest:IField, source:IField):void {
+			assembler.append("cos " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -227,8 +227,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function abs(dest:IField, source:IField):void {
-			Assembler.append("abs " + dest["reg"] + ", " + source["reg"]);
+		public function abs(dest:IField, source:IField):void {
+			assembler.append("abs " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -237,8 +237,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function negate(dest:IField, source:IField):void {
-			Assembler.append("neg " + dest["reg"] + ", " + source["reg"]);
+		public function negate(dest:IField, source:IField):void {
+			assembler.append("neg " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -247,8 +247,8 @@ package com.barliesque.agal {
 		 * @param	dest		The destination register or component selection
 		 * @param	source		The source register or component selection
 		 */
-		static protected function saturate(dest:IField, source:IField):void {
-			Assembler.append("sat " + dest["reg"] + ", " + source["reg"]);
+		public function saturate(dest:IField, source:IField):void {
+			assembler.append("sat " + dest["reg"] + ", " + source["reg"]);
 		}
 		
 		/**
@@ -260,8 +260,8 @@ package com.barliesque.agal {
 		 * @param	source1		Value on the left side of the comparison
 		 * @param	source2		Value on the right side of the comparison
 		 */
-		static protected function setIf_GreaterEqual(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("sge " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function setIf_GreaterEqual(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("sge " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/** 
@@ -273,8 +273,8 @@ package com.barliesque.agal {
 		 * @param	source1		Value on the left side of the comparison
 		 * @param	source2		Value on the right side of the comparison
 		 */
-		static protected function setIf_LessThan(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("slt " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function setIf_LessThan(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("slt " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/*
@@ -285,8 +285,8 @@ package com.barliesque.agal {
 		 * @param	source		The source register or component selection
 		 */
 		/*
-		static protected function sign(dest:IField, source:IField):void {
-			Assembler.append("sgn " + dest["reg"] + ", " + source["reg"]);
+		public function sign(dest:IField, source:IField):void {
+			assembler.append("sgn " + dest["reg"] + ", " + source["reg"]);
 		}
 		*/
 		
@@ -299,8 +299,8 @@ package com.barliesque.agal {
 		 * @param	source1		Value on the left side of the comparison
 		 * @param	source2		Value on the right side of the comparison
 		 */
-		static protected function setIf_Equal(dest:IField, source1:IField, source2:IField):void { //, temp:IRegister):void {
-			Assembler.append("seq " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function setIf_Equal(dest:IField, source1:IField, source2:IField):void { //, temp:IRegister):void {
+			assembler.append("seq " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 			/*
 			* @param	temp		A temporary register which will be utilized for this comparison
 			// This is a 3-instruction macro substitute for the currently unsupported [seq] opcode.</p>
@@ -319,8 +319,8 @@ package com.barliesque.agal {
 		 * @param	source1		Value on the left side of the comparison
 		 * @param	source2		Value on the right side of the comparison
 		 */
-		static protected function setIf_NotEqual(dest:IField, source1:IField, source2:IField):void { //, temp:IRegister):void {
-			Assembler.append("sne " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function setIf_NotEqual(dest:IField, source1:IField, source2:IField):void { //, temp:IRegister):void {
+			assembler.append("sne " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 			/*
 			* @param	temp		A temporary register which will be utilized for this comparison
 			// This is a 3-instruction macro substitute for the currently unsupported [sne] opcode.
@@ -338,8 +338,8 @@ package com.barliesque.agal {
 		 * @param	source1		A three-component vector
 		 * @param	source2		A three-component vector
 		 **/
-		static protected function crossProduct(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("crs " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function crossProduct(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("crs " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -350,8 +350,8 @@ package com.barliesque.agal {
 		 * @param	source1		A three-component vector	
 		 * @param	source2		A three-component vector
 		 **/
-		static protected function dotProduct3(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("dp3 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function dotProduct3(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("dp3 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -362,8 +362,8 @@ package com.barliesque.agal {
 		 * @param	source1		A three-component vector	
 		 * @param	source2		A three-component vector
 		 **/
-		static protected function dotProduct4(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("dp4 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function dotProduct4(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("dp4 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -372,8 +372,8 @@ package com.barliesque.agal {
 		 * @param	source1		A 3-component row vector to be multiplied
 		 * @param	source2		The first of three consecutive registers, forming a 3x3 matrix
 		 */
-		static protected function multiply3x3(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("m33 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function multiply3x3(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("m33 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -382,8 +382,8 @@ package com.barliesque.agal {
 		 * @param	source1		A 4-component row vector to be multiplied
 		 * @param	source2		The first of four consecutive registers, forming a 4x4 matrix
 		 */
-		static protected function multiply4x4(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("m44 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function multiply4x4(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("m44 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
@@ -392,16 +392,16 @@ package com.barliesque.agal {
 		 * @param	source1		A 4-component row vector to be multiplied
 		 * @param	source2		The first of three consecutive registers, forming a 3x4 matrix
 		 */
-		static protected function multiply3x4(dest:IField, source1:IField, source2:IField):void {
-			Assembler.append("m34 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
+		public function multiply3x4(dest:IField, source1:IField, source2:IField):void {
+			assembler.append("m34 " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"]);
 		}
 		
 		/**
 		 * [kil]  If the value passed is less than zero, the fragment is discarded and not drawn to the frame buffer.
 		 * @param	source		A single component value
 		 */
-		static protected function killFragment(source:IComponent):void {
-			Assembler.append("kil " + source["reg"]);
+		public function killFragment(source:IComponent):void {
+			assembler.append("kil " + source["reg"]);
 		}
 		
 		/**
@@ -413,8 +413,8 @@ package com.barliesque.agal {
 		 * 
 		 * @see TextureFlag
 		 */
-		static protected function sampleTexture(dest:IField, source1:IField, source2:ISampler, flags:Array = null):void {
-			if (Assembler.assemblingVertex) throw new Error("sampleTexture() is only available in vertex shaders.");
+		public function sampleTexture(dest:IField, source1:IField, source2:ISampler, flags:Array = null):void {
+			if (assembler.assemblingVertex) throw new Error("sampleTexture() is only available in vertex shaders.");
 			var code:String = "tex " + dest["reg"] + ", " + source1["reg"] + ", " + source2["reg"];
 			if (flags) {
 				code += " <";
@@ -423,7 +423,7 @@ package com.barliesque.agal {
 				}
 				code = code.substr(0, code.length - 1) + ">";
 			}
-			Assembler.append(code);
+			assembler.append(code);
 		}
 		
 	}
