@@ -45,8 +45,7 @@ package com.barliesque.agal {
 		/// @private
 		static public function valid(prop:String):Boolean {
 			switch(prop) {
-				case "x":	case "y":	case "z":	case "w":	
-				case "r":	case "g":	case "b":	case "a":
+				case "x":	case "y":	case "z":	case "w":
 					return true;
 			}
 			return false;

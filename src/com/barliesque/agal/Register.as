@@ -52,16 +52,16 @@ package com.barliesque.agal {
 		public function get z():Component { return new Component(this, "z"); }
 		public function get w():Component { return new Component(this, "w"); }
 		
-		public function get r():Component { return new Component(this, "r"); }
-		public function get g():Component { return new Component(this, "g"); }
-		public function get b():Component { return new Component(this, "b"); }
-		public function get a():Component { return new Component(this, "a"); }
+		public function get r():Component { return new Component(this, "x"); }
+		public function get g():Component { return new Component(this, "y"); }
+		public function get b():Component { return new Component(this, "z"); }
+		public function get a():Component { return new Component(this, "w"); }
 		
 		public function get xy():ComponentSelection { return new ComponentSelection(this, "xy"); }
 		public function get zw():ComponentSelection { return new ComponentSelection(this, "zw"); }
 		
 		public function get xyz():ComponentSelection { return new ComponentSelection(this, "xyz"); }
-		public function get rgb():ComponentSelection { return new ComponentSelection(this, "rgb"); }
+		public function get rgb():ComponentSelection { return new ComponentSelection(this, "xyz"); }
 		
 		/**  Specify any arbitrary component selection in any order, e.g. CONST[2]._("zyx")  */
 		public function _(components:String):IField { 
