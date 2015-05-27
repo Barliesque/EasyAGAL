@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="EasyAGAL">
+    <configurations>
+      <configuration name="EasyAGAL" target-platform="Desktop" pure-as="true" output-type="Library" output-file="EasyAGAL.swc" output-folder="$MODULE_DIR$/out">
+        <dependencies>
+          <sdk name="AIR SDK 4.0" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/Docs" />
+      <excludeFolder url="file://$MODULE_DIR$/Examples" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
+      <excludeFolder url="file://$MODULE_DIR$/swc" />
+    </content>
+    <orderEntry type="jdk" jdkName="AIR SDK 4.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
+
