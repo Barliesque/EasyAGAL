@@ -28,7 +28,9 @@ package com.barliesque.shaders.macro {
 		 * @param	temp		A temporary register that will be utilized for this operation
 		 */
 		static public function setByComparison(dest:IField, operandA:IField, comparison:String, operandB:IField, trueResult:IField, falseResult:IField, temp:IRegister):void {
-			
+            if (dest == trueResult) throw new Error("'dest' and 'trueResult' cannot be the same register");
+            if (dest == falseResult) throw new Error("'dest' and 'falseResult' cannot be the same register");
+
 			// First make the requested comparison
 			// and set the temporary to the inverse
 			switch (comparison) {
